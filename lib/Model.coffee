@@ -1,9 +1,46 @@
-mixer = require 'mixer'
 rivets = require 'rivets'
 syncAdapter = require './syncAdapter'
+Emitter = require 'emitter'
 
-class Model extends mixer.Module
+class Model extends Emitter
   sync: syncAdapter
+
+  constructor: (o) ->
+    @_props = {}
+    @set o
+
+  get: (k) -> @_props[k]
+
+  set: (k, v, silent) ->
+    return unless k?
+    if typeof k is 'object'
+      silent = v
+      @set ky, vy, silent for ky,vy of k
+      return @
+    else
+      @_props[k] = v
+      unless silent
+        @emit "change", k, v
+        @emit "change:#{k}", v
+      return @
+
+  clear: (silent) ->
+    @remove k, silent for k,v of @_props
+    return @
+
+  has: (k) -> @_props[k]?
+
+  remove: (k, silent) -> 
+    delete @_props[k]
+    unless silent
+      @emit "change", k
+      @emit "change:#{k}"
+
+      @emit "remove", k
+      @emit "remove:#{k}"
+    return @
+
+  toJSON: -> @_props
 
   fetch: (opt, cb) ->
     if typeof opt is 'function' and !cb

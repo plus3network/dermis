@@ -130,27 +130,6 @@ describe("model", function() {
     });
     return done();
   });
-  it("should be able to list props via getAll", function(done) {
-    var TestModel, mod;
-    TestModel = (function(_super) {
-
-      __extends(TestModel, _super);
-
-      function TestModel() {
-        return TestModel.__super__.constructor.apply(this, arguments);
-      }
-
-      return TestModel;
-
-    })(dermis.Model);
-    mod = new TestModel({
-      wut: 2
-    });
-    mod.getAll().should.eql({
-      wut: 2
-    });
-    return done();
-  });
   it("should be able to set then has", function(done) {
     var TestModel, mod;
     TestModel = (function(_super) {

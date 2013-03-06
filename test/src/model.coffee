@@ -55,13 +55,6 @@ describe "model", ->
     mod.toJSON().should.eql wut: 2
     done()
 
-  it "should be able to list props via getAll", (done) ->
-    class TestModel extends dermis.Model
-
-    mod = new TestModel wut: 2
-    mod.getAll().should.eql wut: 2
-    done()
-
   it "should be able to set then has", (done) ->
     class TestModel extends dermis.Model
 
