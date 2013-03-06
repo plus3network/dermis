@@ -196,6 +196,7 @@ class Model extends Emitter
   # See [Binding documentation](../manual/Binding.html) for more information.
   #
   # Returns model for chaining purposes
+  
   bind: (el) ->
     rivets.bind el, @
     return @
