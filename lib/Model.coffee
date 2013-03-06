@@ -2,14 +2,39 @@ rivets = require 'rivets'
 syncAdapter = require './syncAdapter'
 Emitter = require 'emitter'
 
+# # Model
+# Models are like standard objects but with a punch.
+#
+# With dermis models you can observe, sync, and use a set of utility functions to speed up your development.
+#
+# You can create a simple model by doing ```new dermis.Model()```
+#
+# To extend or create a custom model see the [Extending documentation](../manual/Extending.html)
+
+
 class Model extends Emitter
   sync: syncAdapter
+
+  # ### constructor(properties)
+  # Creates a new Model
+  #
+  # properties object is optional but if given it will .set() them
 
   constructor: (o) ->
     @_props = {}
     @set o
 
+  # ### get(key)
+  # Returns the value for given key
+
   get: (k) -> @_props[k]
+
+  # ### set(key, val, silent=false)
+  # Sets the value of key to val
+  #
+  # Will emit ```change:{key}``` event unless silent is true
+  #
+  # Returns the model for chaining purposes
 
   set: (k, v, silent) ->
     return unless k?
@@ -24,11 +49,28 @@ class Model extends Emitter
         @emit "change:#{k}", v
       return @
 
+  # ### clear(silent=false)
+  # Removes all properties from the model
+  #
+  # Will emit ```remove:{key}``` event for each property unless silent is true
+  #
+  # Returns the model for chaining purposes
+
   clear: (silent) ->
     @remove k, silent for k,v of @_props
     return @
 
+  # ### has(key)
+  # Returns true or false if the model has a property with the given name
+
   has: (k) -> @_props[k]?
+
+  # ### remove(key, silent=false)
+  # Removes property with given name from the model
+  #
+  # Will emit ```remove:{key}``` event unless silent is true
+  #
+  # Returns the model for chaining purposes
 
   remove: (k, silent) -> 
     delete @_props[k]
@@ -40,7 +82,23 @@ class Model extends Emitter
       @emit "remove:#{k}"
     return @
 
+  # ### toJSON()
+  # Returns a standard object with all model properties
+
   toJSON: -> @_props
+
+  # ### fetch(options, callback)
+  # See [Syncing documentation](../manual/Syncing.html) for possible options.
+  #
+  # callback is optional and will be called with ```(error, response)``` if given.
+  #
+  # Will emit fetching, fetched, and fetchError events.
+  #
+  # Will use either model.url or model.urls.read for GET request
+  #
+  # Will .set() object received in response
+  #
+  # Returns model for chaining purposes
 
   fetch: (opt, cb) ->
     if typeof opt is 'function' and !cb
@@ -57,6 +115,17 @@ class Model extends Emitter
       cb err, res if cb
     return @
 
+  # ### save(options, callback)
+  # See [Syncing documentation](../manual/Syncing.html) for possible options.
+  #
+  # callback is optional and will be called with ```(error, response)``` if given.
+  #
+  # Will emit saving, saved, and saveError events.
+  #
+  # Will use either model.url or model.urls.update for PUT request
+  #
+  # Returns model for chaining purposes
+
   save: (opt, cb) ->
     if typeof opt is 'function' and !cb
       cb = opt
@@ -70,6 +139,17 @@ class Model extends Emitter
       @emit "saved", res
       cb err, res if cb
     return @
+
+  # ### create(options, callback)
+  # See [Syncing documentation](../manual/Syncing.html) for possible options.
+  #
+  # callback is optional and will be called with ```(error, response)``` if given.
+  #
+  # Will emit creating, created, and createError events.
+  #
+  # Will use either model.url or model.urls.create for POST request
+  #
+  # Returns model for chaining purposes
 
   create: (opt, cb) ->
     if typeof opt is 'function' and !cb
@@ -85,6 +165,17 @@ class Model extends Emitter
       cb err, res if cb
     return @
 
+  # ### destroy(options, callback)
+  # See [Syncing documentation](../manual/Syncing.html) for possible options.
+  #
+  # callback is optional and will be called with ```(error, response)``` if given.
+  #
+  # Will emit destroying, destroyed, and destroyError events.
+  #
+  # Will use either model.url or model.urls.create for DELETE request
+  #
+  # Returns model for chaining purposes
+
   destroy: (opt, cb) ->
     if typeof opt is 'function' and !cb
       cb = opt
@@ -99,7 +190,14 @@ class Model extends Emitter
       cb err, res if cb
     return @
 
+  # ### bind(el)
+  # Binds model properties to a DOM element using dermis data binding.
+  #
+  # See [Binding documentation](../manual/Binding.html) for more information.
+  #
+  # Returns model for chaining purposes
   bind: (el) ->
     rivets.bind el, @
+    return @
 
 module.exports = Model

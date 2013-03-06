@@ -171,7 +171,8 @@ Model = (function(_super) {
   };
 
   Model.prototype.bind = function(el) {
-    return rivets.bind(el, this);
+    rivets.bind(el, this);
+    return this;
   };
 
   return Model;

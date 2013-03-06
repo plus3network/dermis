@@ -4,24 +4,32 @@ rivetsConfig = require './rivetsConfig'
 Model = require './Model'
 
 # # Collection
-# Collections are similar to standard arrays but provide a lot of cool features.
+# Collections are like standard arrays but with a punch.
 #
 # With dermis collections you can observe, cast, sync, and use a set of utility functions to speed up your development.
 #
 # Collections are also models so you can do all of the standard model stuff on it too. See the [Model documentation](Model.html) for more details.
+#
 # You can create a simple collection by doing ```new dermis.Collection()```
 #
 # To extend or create a custom collection see the [Extending documentation](../manual/Extending.html)
 
 class Collection extends Model
-  constructor: ->
+
+  # ### constructor(items)
+  # Creates a new Model
+  #
+  # items array is optional but if given it will .add() them
+
+  constructor: (items) ->
     super
     @set 'models', []
+    @add items if items
 
   # ### add(toAdd, silent=false)
   # Adds the given object to the collection. toAdd can also be an array of objects.
   #
-  # Will emit change:models and add events unless silent is true
+  # Will emit ```change:models``` and ```add``` events unless silent is true
   #
   # Will cast object to a model if the collection has a model property.
   #
@@ -45,7 +53,7 @@ class Collection extends Model
   # ### remove(toRemove, silent=false)
   # Removes the given object from the collection. toRemove can also be an array of objects.
   #
-  # Will emit change:models and remove events unless silent is true
+  # Will emit ```change:models``` and ```remove``` events unless silent is true
   #
   # Returns the collection for chaining purposes.
 
@@ -64,7 +72,7 @@ class Collection extends Model
   # ### removeAt(index, silent=false)
   # Removes the object at the given index from the collection.
   #
-  # Will emit change:models and remove events unless silent is true
+  # Will emit ```change:models``` and ```remove``` events unless silent is true
   #
   # Returns the collection for chaining purposes.
 
@@ -76,7 +84,7 @@ class Collection extends Model
   #
   # Will add newItems to the collection if given. newItems can be an object or array of objects.
   #
-  # Will emit change:models and reset events unless silent is true
+  # Will emit ```change:models``` and ```reset``` events unless silent is true
   #
   # Returns the collection for chaining purposes.
 
@@ -191,6 +199,8 @@ class Collection extends Model
   # callback is optional and will be called with ```(error, response)``` if given.
   #
   # Will emit fetching, fetched, and fetchError events.
+  #
+  # Will use either collection.url or collection.urls.read for request
   #
   # Returns collection for chaining purposes
   

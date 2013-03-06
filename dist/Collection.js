@@ -15,9 +15,12 @@ Collection = (function(_super) {
 
   __extends(Collection, _super);
 
-  function Collection() {
+  function Collection(items) {
     Collection.__super__.constructor.apply(this, arguments);
     this.set('models', []);
+    if (items) {
+      this.add(items);
+    }
   }
 
   Collection.prototype.add = function(o, silent) {
