@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Tests Dermis</title>
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="../node_modules/mocha/mocha.css" />
+  </head>
+  <body>
+    <div id="mocha"></div>
+    <div id="sandbox"></div>
+    <script src="./deps-cov/dermis.js"></script>
+    <script>
+    !window.dermis && document.write(unescape('%3Cscript src="plztestme/dermis.js"%3E%3C/script%3E'))
+    </script>
+    <script src="./deps/jquery.js"></script>
+    <script src="../node_modules/mocha/mocha.js"></script>
+    <script src="../node_modules/chai/chai.js"></script>
+    <script>
+      mocha.ui('bdd');
+      mocha.reporter('html');
+    </script>
+    <script src="./lib/main.js"></script>
+
+    <script src="./lib/model.js"></script>
+    <script src="./lib/collection.js"></script>
+    <script src="./lib/view.js"></script>
+    <script src="./lib/layout.js"></script>
+
+    <script src="./lib/routing.js"></script>
+    <script src="./lib/syncing.js"></script>
+    <script src="./lib/binding.js"></script>
+
+    <script>
+      if (window.mochaPhantomJS) { mochaPhantomJS.run(); }
+      else { mocha.run(); }
+    </script>
+
+  </body>
+</html>

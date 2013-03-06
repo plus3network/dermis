@@ -1,0 +1,39 @@
+{
+   "name":"dermis",
+   "description":"Simple framework",
+   "version":"0.0.1",
+   "homepage":"http://github.com/wearefractal/dermis",
+   "repository":"git://github.com/wearefractal/dermis.git",
+   "author":"Fractal <contact@wearefractal.com> (http://wearefractal.com/)",
+   "main":"./index.js",
+   
+   "dependencies":{
+      "coffee-script":"*"
+   },
+   "devDependencies":{
+      "mocha":"*",
+      "chai":"*",
+      "mocha-phantomjs":"*",
+      "requirejs":"*",
+      "uglify-js":"*",
+      "json2htmlcov": "*",
+      "shelljs": "*",
+      "express": "*",
+      "flour": "*",
+      "shelljs": "*",
+      "component": "*",
+      "lidoc": "*"
+   },
+   "scripts":{
+      "test":"make test"
+   },
+   "engines":{
+      "node":">= 0.4.0"
+   },
+   "licenses":[
+      {
+         "type":"MIT",
+         "url":"http://github.com/wearefractal/dermis/raw/master/LICENSE"
+      }
+   ]
+}

@@ -1,0 +1,30 @@
+{
+  "name": "dermis",
+  "version": "0.3.0",
+  "dependencies": {
+    "component/emitter":"*",
+    "apily/guid": "*",
+    "mikeric/rivets": "*",
+    "segmentio/extend": "*",
+    "wearefractal/mixer": "*",
+    "anthonyshort/event-splitter": "*",
+    "visionmedia/page.js": "*",
+    "visionmedia/superagent": "*"
+  },
+  "main": "dist/dermis.js",
+  "scripts": [
+    "dist/delegate.js",
+    "dist/makeElement.js",
+    "dist/rivetsConfig.js",
+    "dist/syncAdapter.js",
+    "dist/util.js",
+    
+    "dist/Model.js",
+    "dist/Collection.js",
+    "dist/View.js",
+    "dist/Layout.js",
+    "dist/Router.js",
+    "dist/Channel.js",
+    "dist/dermis.js"
+  ]
+}
