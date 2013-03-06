@@ -3254,6 +3254,7 @@ Layout = (function(_super) {
 
   Layout.prototype.render = function() {
     var name, select, v, _ref, _ref1;
+    Layout.__super__.render.apply(this, arguments);
     _ref = this.regions;
     for (name in _ref) {
       select = _ref[name];
