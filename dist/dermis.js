@@ -30,6 +30,9 @@ dermis = {
   binding: rivets,
   sync: require('./syncAdapter'),
   http: require('superagent'),
+  nextTick: function(fn) {
+    return setTimeout(fn, 0);
+  },
   internal: {
     bindingConfig: rivetsConfig,
     makeElement: require('./makeElement'),

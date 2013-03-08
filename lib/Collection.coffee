@@ -8,7 +8,7 @@ Model = require './Model'
 #
 # With dermis collections you can observe, cast, sync, and use a set of utility functions to speed up your development.
 #
-# Collections are also models so you can do all of the standard model stuff on it too. See the [Model documentation](Model.html) for more details.
+# Collections are also [Model](Model.html)s so you can do all of the standard [Model](Model.html) stuff on it too. See the [Model documentation](Model.html) for more details.
 #
 # You can create a simple collection by doing ```new dermis.Collection()```
 #
@@ -17,7 +17,7 @@ Model = require './Model'
 class Collection extends Model
 
   # ### constructor(items)
-  # Creates a new Model
+  # Creates a new Collection
   #
   # items array is optional but if given it will .add() them
 
@@ -26,12 +26,16 @@ class Collection extends Model
     @set 'models', []
     @add items if items
 
+  # ### model
+  # Settings this to a [Model](Model.html) will cast all objects added to the given model.
+
+  model: null
   # ### add(toAdd, silent=false)
   # Adds the given object to the collection. toAdd can also be an array of objects.
   #
   # Will emit ```change:models``` and ```add``` events unless silent is true
   #
-  # Will cast object to a model if the collection has a model property.
+  # Will cast object to a [Model](Model.html) if the collection has a model property.
   #
   # Returns the collection for chaining purposes.
 
@@ -154,7 +158,7 @@ class Collection extends Model
   # ### where(object, raw=false)
   # Iterates through the list and finds each value that contain all of the key-value pairs in object.
   #
-  # Specify ```raw=true``` if the items in the collection are models but you do not want to use .get().
+  # Specify ```raw=true``` if the items in the collection are [Model](Model.html)s but you do not want to use .get().
   #
   # Returns an array of values that pass the truth test.
 
@@ -168,7 +172,7 @@ class Collection extends Model
       return true
 
   # ### pluck(attribute, raw=false)
-  # Specify ```raw=true``` if the items in the collection are models but you do not want to use .get().
+  # Specify ```raw=true``` if the items in the collection are [Model](Model.html)s but you do not want to use .get().
   #
   # Returns an array of values that have been grabbed as properties of each item in the collection.
 

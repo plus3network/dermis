@@ -25,6 +25,7 @@ dermis =
   sync: require './syncAdapter'
   http: require 'superagent'
 
+  nextTick: (fn) -> setTimeout fn, 0
   internal:
     bindingConfig: rivetsConfig
     makeElement: require './makeElement'
