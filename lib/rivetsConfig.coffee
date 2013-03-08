@@ -80,37 +80,45 @@ cfg =
     # ```data-text="user.friends | at 0"```
     #
     # Returns the item at the index specified for values
-    at: (v, a) -> v[parseInt(a)]
+    at: (v, a) ->
+      return v unless v?
+      return v[parseInt(a)]
 
     # ### join
     # ```data-text="user.friends | join ,"```
     #
     # Returns the output of value joined by the argument
-    join: (v, a) -> v.join a
+    join: (v, a) ->
+      return v unless v?
+      return v.join a
 
     # ### split
     # ```data-each-friend="user.friendList | split ,"```
     #
     # Returns an array of value split by the argument
-    split: (v, a) -> v.split a
+    split: (v, a) ->
+      return v unless v?
+      return v.split a
 
     # ### prepend
     # ```data-href="user.name | prepend /users/"```
     #
     # Returns a string of argument + value
-    prepend: (v,a) -> a+v
+    prepend: (v,a...) -> a.join(' ')+v
 
     # ### append
     # ```data-href="user.name | prepend /users/ | append /messages"```
     #
     # Returns a string of value + argument
-    append: (v,a) -> v+a
+    append: (v,a...) -> v+a.join(' ')
 
     # ### length
     # ```data-text="user.friends | length"```
     #
     # Returns the length of the value
-    length: (v) -> v.length
+    length: (v) ->
+      return v unless v?
+      return v.length
 
     # ### cancelEvent
     # ```data-on-submit="user:save | cancelEvent"```
@@ -119,7 +127,8 @@ cfg =
     #
     # Returns a new function wrapping value that stops event propagation.
     cancelEvent: (v) ->
-      (e) ->
+      return v unless v?
+      return (e) ->
         e.preventDefault()
         v.call @, e
         return false

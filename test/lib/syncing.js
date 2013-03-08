@@ -9,7 +9,7 @@ describe("syncing", function() {
   describe("create", function() {
     return it("should POST with data", function(done) {
       var fakeModel;
-      fakeModel = new dermis.Emitter;
+      fakeModel = new dermis.Channel;
       fakeModel.url = "http://localhost:8888/tests";
       fakeModel.toJSON = function() {
         var o;
@@ -31,7 +31,7 @@ describe("syncing", function() {
   describe("read", function() {
     return it("should GET correctly", function(done) {
       var fakeModel;
-      fakeModel = new dermis.Emitter;
+      fakeModel = new dermis.Channel;
       fakeModel.url = "http://localhost:8888/tests/1";
       fakeModel.toJSON = function() {
         return {};
@@ -49,7 +49,7 @@ describe("syncing", function() {
   describe("update", function() {
     return it("should PUT correctly", function(done) {
       var fakeModel;
-      fakeModel = new dermis.Emitter;
+      fakeModel = new dermis.Channel;
       fakeModel.url = "http://localhost:8888/tests/1";
       fakeModel.toJSON = function() {
         var o;
@@ -76,7 +76,7 @@ describe("syncing", function() {
       if (window._phantom) {
         return done();
       }
-      fakeModel = new dermis.Emitter;
+      fakeModel = new dermis.Channel;
       fakeModel.url = "http://localhost:8888/tests/1";
       fakeModel.toJSON = function() {
         var o;
@@ -98,7 +98,7 @@ describe("syncing", function() {
   return describe("destroy", function() {
     return it("should DEL correctly", function(done) {
       var fakeModel;
-      fakeModel = new dermis.Emitter;
+      fakeModel = new dermis.Channel;
       fakeModel.url = "http://localhost:8888/tests/1";
       fakeModel.toJSON = function() {
         return {};

@@ -1,9 +1,14 @@
 Emitter = require 'emitter'
 View = require './View'
+Region = require './Region'
 util = require './util'
 
 # # Layout
 # A Layout is an extension on top of a View that abstracts away the complexity of managing sub-views.
+#
+# Each Layout is a set of [Regions](Region.html) that can have views assigned to them.
+#
+# See [the Region documentation](Region.html) for Region-related controls.
 
 class Layout extends View
   constructor: ->
@@ -23,34 +28,7 @@ class Layout extends View
   # Returns the created Region
 
   addRegion: (name) =>
-    @_regions[name] =
-      view: null
-      $el: null
-      show: (a...) =>
-        reg = @_regions[name]
-        if reg.view
-          reg.clear()
-          vu = reg.view
-          vu.setElement vu.el
-          reg.$el.html vu.render(a...).el
-          @emit "show:#{name}"
-          @emit "show", name
-        return reg
-
-      set: (nu) =>
-        reg = @_regions[name]
-        reg.view = nu
-        @emit "change:#{name}", nu
-        @emit "change", name, nu
-        return reg
-
-      clear: =>
-        reg = @_regions[name]
-        if reg.view
-          reg.view.remove()
-          @emit "clear:#{name}"
-          @emit "clear", name
-        return reg
+    @_regions[name] = new Region
 
   # ### render()
   # Loads regions and wires them up to the Layout's ```.el```

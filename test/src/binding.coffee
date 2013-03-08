@@ -97,11 +97,13 @@ describe "binding formatters", ->
   describe "prepend", ->
     it 'should work', (done) ->
       formatters.prepend("world", "hello").should.equal "helloworld"
+      formatters.prepend("world", "hello", "cruel").should.equal "hello cruelworld"
       done()
 
   describe "append", ->
     it 'should work', (done) ->
       formatters.append("hello","world").should.equal "helloworld"
+      formatters.append("hello","cruel","world").should.equal "hellocruel world"
       done()
 
   describe "cancelEvent", ->
@@ -131,7 +133,7 @@ describe "binding adapter", ->
         newVal.should.equal "hello"
         done()
 
-      fakeModel = new dermis.Emitter
+      fakeModel = new dermis.Channel
       adapter.subscribe fakeModel, "test", changed
 
       fakeModel.emit "change:test", "hello"
@@ -141,7 +143,7 @@ describe "binding adapter", ->
       changed = (newVal) ->
         throw new Error "Called!"
 
-      fakeModel = new dermis.Emitter
+      fakeModel = new dermis.Channel
       adapter.subscribe fakeModel, "test", changed
       adapter.unsubscribe fakeModel, "test", changed
       fakeModel.emit "change:test", "hello"

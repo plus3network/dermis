@@ -8,16 +8,21 @@ rivets.formatters[k]=v for k,v of rivetsConfig.formatters
 
 dermis =
   Layout: require './Layout'
+  Region: require './Region'
+
   Model: require './Model'
-  View: require './View'
   Collection: require './Collection'
+
+  View: require './View'
+
   Channel: Channel
   Router: Router
-  Emitter: require 'emitter'
-  binding: rivets
-  sync: require './syncAdapter'
   router: new Router
   channel: new Channel
+  
+  binding: rivets
+
+  sync: require './syncAdapter'
   http: require 'superagent'
 
   internal:

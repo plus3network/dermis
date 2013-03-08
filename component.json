@@ -22,6 +22,7 @@
     "dist/Collection.js",
     "dist/View.js",
     "dist/Layout.js",
+    "dist/Region.js",
     "dist/Router.js",
     "dist/Channel.js",
     "dist/dermis.js"

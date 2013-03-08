@@ -118,12 +118,14 @@ describe("binding formatters", function() {
   describe("prepend", function() {
     return it('should work', function(done) {
       formatters.prepend("world", "hello").should.equal("helloworld");
+      formatters.prepend("world", "hello", "cruel").should.equal("hello cruelworld");
       return done();
     });
   });
   describe("append", function() {
     return it('should work', function(done) {
       formatters.append("hello", "world").should.equal("helloworld");
+      formatters.append("hello", "cruel", "world").should.equal("hellocruel world");
       return done();
     });
   });
@@ -160,7 +162,7 @@ describe("binding adapter", function() {
         newVal.should.equal("hello");
         return done();
       };
-      fakeModel = new dermis.Emitter;
+      fakeModel = new dermis.Channel;
       adapter.subscribe(fakeModel, "test", changed);
       return fakeModel.emit("change:test", "hello");
     });
@@ -171,7 +173,7 @@ describe("binding adapter", function() {
       changed = function(newVal) {
         throw new Error("Called!");
       };
-      fakeModel = new dermis.Emitter;
+      fakeModel = new dermis.Channel;
       adapter.subscribe(fakeModel, "test", changed);
       adapter.unsubscribe(fakeModel, "test", changed);
       fakeModel.emit("change:test", "hello");

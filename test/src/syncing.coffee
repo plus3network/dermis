@@ -3,7 +3,7 @@ should = chai.should()
 describe "syncing", ->
   describe "create", ->
     it "should POST with data", (done) ->
-      fakeModel = new dermis.Emitter
+      fakeModel = new dermis.Channel
       fakeModel.url = "http://localhost:8888/tests"
       fakeModel.toJSON = ->
         o =
@@ -20,7 +20,7 @@ describe "syncing", ->
 
   describe "read", ->
     it "should GET correctly", (done) ->
-      fakeModel = new dermis.Emitter
+      fakeModel = new dermis.Channel
       fakeModel.url = "http://localhost:8888/tests/1"
       fakeModel.toJSON = -> {}
 
@@ -34,7 +34,7 @@ describe "syncing", ->
 
   describe "update", ->
     it "should PUT correctly", (done) ->
-      fakeModel = new dermis.Emitter
+      fakeModel = new dermis.Channel
       fakeModel.url = "http://localhost:8888/tests/1"
       fakeModel.toJSON = ->
         o =
@@ -54,7 +54,7 @@ describe "syncing", ->
   describe "patch", ->
     it "should PATCH correctly", (done) ->
       return done() if window._phantom # PATCH is broken in phantom?
-      fakeModel = new dermis.Emitter
+      fakeModel = new dermis.Channel
       fakeModel.url = "http://localhost:8888/tests/1"
       fakeModel.toJSON = ->
         o =
@@ -71,7 +71,7 @@ describe "syncing", ->
 
   describe "destroy", ->
     it "should DEL correctly", (done) ->
-      fakeModel = new dermis.Emitter
+      fakeModel = new dermis.Channel
       fakeModel.url = "http://localhost:8888/tests/1"
       fakeModel.toJSON = -> {}
 
