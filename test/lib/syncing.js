@@ -118,7 +118,7 @@ describe("syncing", function() {
 describe("model syncing", function() {
   describe("fetch", function() {
     it("should work with read url", function(done) {
-      var TestModel, mod, synced, syncing;
+      var TestModel, fetched, mod, synced, syncing;
       TestModel = (function(_super) {
 
         __extends(TestModel, _super);
@@ -140,6 +140,7 @@ describe("model syncing", function() {
       })(dermis.Model);
       syncing = false;
       synced = false;
+      fetched = false;
       mod = new TestModel;
       mod.on("fetching", function(opt) {
         should.exist(opt);
@@ -149,6 +150,9 @@ describe("model syncing", function() {
         should.exist(res);
         return synced = true;
       });
+      mod.fetched(function() {
+        return fetched = true;
+      });
       return mod.fetch(function(err, res) {
         should.not.exist(err);
         should.exist(res);
@@ -156,11 +160,12 @@ describe("model syncing", function() {
         mod.get("test").should.equal("hello");
         syncing.should.equal(true);
         synced.should.equal(true);
+        fetched.should.equal(true);
         return done();
       });
     });
     return it("should work with single url", function(done) {
-      var TestModel, mod, synced, syncing;
+      var TestModel, fetched, mod, synced, syncing;
       TestModel = (function(_super) {
 
         __extends(TestModel, _super);
@@ -176,6 +181,7 @@ describe("model syncing", function() {
       })(dermis.Model);
       syncing = false;
       synced = false;
+      fetched = false;
       mod = new TestModel;
       mod.on("fetching", function(opt) {
         should.exist(opt);
@@ -185,6 +191,9 @@ describe("model syncing", function() {
         should.exist(res);
         return synced = true;
       });
+      mod.fetched(function() {
+        return fetched = true;
+      });
       return mod.fetch(function(err, res) {
         should.not.exist(err);
         should.exist(res);
@@ -192,6 +201,7 @@ describe("model syncing", function() {
         mod.get("test").should.equal("hello");
         syncing.should.equal(true);
         synced.should.equal(true);
+        fetched.should.equal(true);
         return done();
       });
     });

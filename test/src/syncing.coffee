@@ -96,6 +96,7 @@ describe "model syncing", ->
 
       syncing = false
       synced = false
+      fetched = false
       mod = new TestModel
       mod.on "fetching", (opt) ->
         should.exist opt
@@ -103,6 +104,8 @@ describe "model syncing", ->
       mod.on "fetched", (res) -> 
         should.exist res
         synced = true
+      mod.fetched ->
+        fetched = true
       mod.fetch (err, res) ->
         should.not.exist err
         should.exist res
@@ -110,6 +113,7 @@ describe "model syncing", ->
         mod.get("test").should.equal "hello"
         syncing.should.equal true
         synced.should.equal true
+        fetched.should.equal true
         done()
 
     it "should work with single url", (done) ->
@@ -118,6 +122,7 @@ describe "model syncing", ->
 
       syncing = false
       synced = false
+      fetched = false
       mod = new TestModel
       mod.on "fetching", (opt) ->
         should.exist opt
@@ -125,6 +130,8 @@ describe "model syncing", ->
       mod.on "fetched", (res) -> 
         should.exist res
         synced = true
+      mod.fetched ->
+        fetched = true
       mod.fetch (err, res) ->
         should.not.exist err
         should.exist res
@@ -132,6 +139,7 @@ describe "model syncing", ->
         mod.get("test").should.equal "hello"
         syncing.should.equal true
         synced.should.equal true
+        fetched.should.equal true
         done()
 
   describe "save", ->

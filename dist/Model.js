@@ -16,6 +16,7 @@ Model = (function(_super) {
   Model.prototype.sync = syncAdapter;
 
   function Model(o) {
+    this._fetched = false;
     this._props = {};
     this.set(o);
   }
@@ -94,6 +95,7 @@ Model = (function(_super) {
         _this.set(res.body);
       }
       _this.emit("fetched", res);
+      _this._fetched = true;
       if (cb) {
         return cb(err, res);
       }
@@ -167,6 +169,15 @@ Model = (function(_super) {
         return cb(err, res);
       }
     });
+    return this;
+  };
+
+  Model.prototype.fetched = function(cb) {
+    if (this._fetched) {
+      cb();
+    } else {
+      this.once("fetched", cb);
+    }
     return this;
   };
 

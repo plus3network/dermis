@@ -21,6 +21,7 @@ class Model extends Emitter
   # properties object is optional but if given it will .set() them
 
   constructor: (o) ->
+    @_fetched = false
     @_props = {}
     @set o
 
@@ -112,6 +113,7 @@ class Model extends Emitter
         return
       @set res.body if typeof res.body is 'object'
       @emit "fetched", res
+      @_fetched = true
       cb err, res if cb
     return @
 
@@ -188,6 +190,18 @@ class Model extends Emitter
         return
       @emit "destroyed", res
       cb err, res if cb
+    return @
+
+  # ### fetched(fn)
+  # Calls given function when model has fetched or if it has already. Kind of like domReady for your model.
+  #
+  # Returns model for chaining purposes
+  
+  fetched: (cb) ->
+    if @_fetched
+      cb()
+    else
+      @once "fetched", cb
     return @
 
   # ### bind(el)
