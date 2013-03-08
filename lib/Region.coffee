@@ -5,7 +5,7 @@ Emitter = require 'emitter'
 
 class Region extends Emitter
   # ### view
-  # The view currently assigned to the region
+  # The [View](View.html) currently assigned to the region
   view: null
   # ### $el
   # The jQuery element currently assigned to the region
@@ -37,7 +37,7 @@ class Region extends Emitter
     return @
 
   # ### .clear()
-  # Calls ```.view.remove()``` which undelegates events and removes the view from the DOM.
+  # Calls ```.view.remove()``` which undelegates events and removes the [View](View.html) from the DOM.
   #
   # Emits a ```clear``` event
   #

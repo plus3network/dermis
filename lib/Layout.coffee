@@ -18,20 +18,20 @@ class Layout extends View
     super
 
   # ### region(name)
-  # Returns the Region with the given name
+  # Returns the [Region](Region.html) with the given name
 
   region: (name) -> @_regions[name]
 
   # ### addRegion(name)
-  # Creates a Region with the given name
+  # Creates a [Region](Region.html) with the given name
   #
-  # Returns the created Region
+  # Returns the created [Region](Region.html)
 
   addRegion: (name) =>
     @_regions[name] = new Region
 
   # ### render()
-  # Loads regions and wires them up to the Layout's ```.el```
+  # Loads child [Region](Region.html)s and wires them up to the Layout's ```.el```
   #
   # Example:
   #
