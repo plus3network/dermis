@@ -2908,6 +2908,8 @@ Collection = (function(_super) {
     }
   }
 
+  Collection.prototype.model = null;
+
   Collection.prototype.add = function(o, silent) {
     var i, mod, _i, _len;
     if (Array.isArray(o)) {
@@ -3122,12 +3124,19 @@ View = (function(_super) {
 
   View.prototype.tagName = 'div';
 
+  View.prototype.id = null;
+
+  View.prototype.className = null;
+
+  View.prototype.attributes = null;
+
   View.prototype.$ = function(sel) {
     return this.$el.find(sel);
   };
 
   View.prototype.bind = function(data) {
-    return rivets.bind(this.$el, data);
+    rivets.bind(this.$el, data);
+    return this;
   };
 
   View.prototype.initialize = function() {

@@ -23,6 +23,8 @@ Collection = (function(_super) {
     }
   }
 
+  Collection.prototype.model = null;
+
   Collection.prototype.add = function(o, silent) {
     var i, mod, _i, _len;
     if (Array.isArray(o)) {
