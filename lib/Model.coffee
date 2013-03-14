@@ -13,7 +13,26 @@ Emitter = require 'emitter'
 
 
 class Model extends Emitter
+  # ### sync
+  # Override this to change the sync adapter for the model.
+  #
+  # Defaults to built-in REST adapter
+
   sync: syncAdapter
+
+  # ### casts
+  # An object of things to cast on .set()
+  #
+  # Example:
+  #
+  # ```{casts: {dog: Pet}}``` will cause ```.set({name:'Tom', dog:{name:'Fido'}})``` to do the equivalent of ```.set({name:'Tom', dog: new Pet({name:'Fido'})})```
+  
+  casts: null
+
+  # ### defaults
+  # Default values to be .set() after .construct()
+
+  defaults: null
 
   # ### constructor(properties)
   # Creates a new Model
@@ -23,6 +42,9 @@ class Model extends Emitter
   constructor: (o) ->
     @_fetched = false
     @_props = {}
+    @casts ?= {}
+
+    @set @defaults if @defaults?
     @set o
 
   # ### get(key)
@@ -44,6 +66,11 @@ class Model extends Emitter
       @set ky, vy, silent for ky,vy of k
       return @
     else
+      # cast val
+      castModel = @casts[k]
+      if castModel?
+        v = new castModel v
+
       @_props[k] = v
       unless silent
         @emit "change", k, v

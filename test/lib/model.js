@@ -6,6 +6,80 @@ var should,
 should = chai.should();
 
 describe("model", function() {
+  it("should be able to specify defaults", function(done) {
+    var Pet, TestModel, mod;
+    Pet = (function(_super) {
+
+      __extends(Pet, _super);
+
+      function Pet() {
+        return Pet.__super__.constructor.apply(this, arguments);
+      }
+
+      return Pet;
+
+    })(dermis.Model);
+    TestModel = (function(_super) {
+
+      __extends(TestModel, _super);
+
+      function TestModel() {
+        return TestModel.__super__.constructor.apply(this, arguments);
+      }
+
+      TestModel.prototype.defaults = {
+        dog: {
+          name: "Fido"
+        },
+        name: "Test"
+      };
+
+      return TestModel;
+
+    })(dermis.Model);
+    mod = new TestModel;
+    mod.get('dog').name.should.equal("Fido");
+    mod.get('name').should.equal("Test");
+    return done();
+  });
+  it("should be able to specify defaults then override via constructor", function(done) {
+    var Pet, TestModel, mod;
+    Pet = (function(_super) {
+
+      __extends(Pet, _super);
+
+      function Pet() {
+        return Pet.__super__.constructor.apply(this, arguments);
+      }
+
+      return Pet;
+
+    })(dermis.Model);
+    TestModel = (function(_super) {
+
+      __extends(TestModel, _super);
+
+      function TestModel() {
+        return TestModel.__super__.constructor.apply(this, arguments);
+      }
+
+      TestModel.prototype.defaults = {
+        dog: {
+          name: "Fido"
+        },
+        name: "Test"
+      };
+
+      return TestModel;
+
+    })(dermis.Model);
+    mod = new TestModel({
+      name: "Tom"
+    });
+    mod.get('dog').name.should.equal("Fido");
+    mod.get('name').should.equal("Tom");
+    return done();
+  });
   it("should be able to set", function(done) {
     var TestModel, mod;
     TestModel = (function(_super) {
@@ -107,6 +181,84 @@ describe("model", function() {
     mod.set({
       wut: 2
     }, true);
+    return done();
+  });
+  it("should be able to set with casting", function(done) {
+    var Pet, TestModel, mod;
+    Pet = (function(_super) {
+
+      __extends(Pet, _super);
+
+      function Pet() {
+        return Pet.__super__.constructor.apply(this, arguments);
+      }
+
+      return Pet;
+
+    })(dermis.Model);
+    TestModel = (function(_super) {
+
+      __extends(TestModel, _super);
+
+      function TestModel() {
+        return TestModel.__super__.constructor.apply(this, arguments);
+      }
+
+      TestModel.prototype.casts = {
+        dog: Pet
+      };
+
+      return TestModel;
+
+    })(dermis.Model);
+    mod = new TestModel;
+    mod.on("change:dog", function(v) {
+      (v instanceof Pet).should.equal(true);
+      v.get('name').should.equal("Fido");
+      return done();
+    });
+    return mod.set("dog", {
+      name: "Fido"
+    });
+  });
+  it("should be able to set with defaults and casting", function(done) {
+    var Pet, TestModel, mod;
+    Pet = (function(_super) {
+
+      __extends(Pet, _super);
+
+      function Pet() {
+        return Pet.__super__.constructor.apply(this, arguments);
+      }
+
+      return Pet;
+
+    })(dermis.Model);
+    TestModel = (function(_super) {
+
+      __extends(TestModel, _super);
+
+      function TestModel() {
+        return TestModel.__super__.constructor.apply(this, arguments);
+      }
+
+      TestModel.prototype.casts = {
+        dog: Pet
+      };
+
+      TestModel.prototype.defaults = {
+        dog: {
+          name: "Fido"
+        }
+      };
+
+      return TestModel;
+
+    })(dermis.Model);
+    mod = new TestModel;
+    should.exist(mod.get('dog'));
+    (mod.get('dog') instanceof Pet).should.equal(true);
+    mod.get('dog').get('name').should.equal("Fido");
     return done();
   });
   it("should be able to list props via toJSON", function(done) {

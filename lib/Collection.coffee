@@ -23,8 +23,8 @@ class Collection extends Model
 
   constructor: (items) ->
     super
-    @set 'models', []
-    @add items if items
+    @set 'models', [] unless @has 'models'
+    @add items if Array.isArray items
 
   # ### model
   # Settings this to a [Model](Model.html) will cast all objects added to the given model.

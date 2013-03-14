@@ -17,8 +17,10 @@ Collection = (function(_super) {
 
   function Collection(items) {
     Collection.__super__.constructor.apply(this, arguments);
-    this.set('models', []);
-    if (items) {
+    if (!this.has('models')) {
+      this.set('models', []);
+    }
+    if (Array.isArray(items)) {
       this.add(items);
     }
   }

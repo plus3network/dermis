@@ -2704,9 +2704,20 @@ Model = (function(_super) {
 
   Model.prototype.sync = syncAdapter;
 
+  Model.prototype.casts = null;
+
+  Model.prototype.defaults = null;
+
   function Model(o) {
+    var _ref;
     this._fetched = false;
     this._props = {};
+    if ((_ref = this.casts) == null) {
+      this.casts = {};
+    }
+    if (this.defaults != null) {
+      this.set(this.defaults);
+    }
     this.set(o);
   }
 
@@ -2715,7 +2726,7 @@ Model = (function(_super) {
   };
 
   Model.prototype.set = function(k, v, silent) {
-    var ky, vy;
+    var castModel, ky, vy;
     if (k == null) {
       return;
     }
@@ -2727,6 +2738,10 @@ Model = (function(_super) {
       }
       return this;
     } else {
+      castModel = this.casts[k];
+      if (castModel != null) {
+        v = new castModel(v);
+      }
       this._props[k] = v;
       if (!silent) {
         this.emit("change", k, v);
@@ -2902,8 +2917,10 @@ Collection = (function(_super) {
 
   function Collection(items) {
     Collection.__super__.constructor.apply(this, arguments);
-    this.set('models', []);
-    if (items) {
+    if (!this.has('models')) {
+      this.set('models', []);
+    }
+    if (Array.isArray(items)) {
       this.add(items);
     }
   }
