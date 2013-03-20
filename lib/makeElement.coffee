@@ -1,4 +1,3 @@
-
 module.exports = (tagName, attributes, content) ->
   el = document.createElement tagName
   $(el).attr attributes if attributes

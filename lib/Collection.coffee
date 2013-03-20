@@ -188,15 +188,6 @@ class Collection extends Model
   
   getAll: -> @get 'models'
 
-  # ### toJSON()
-  # Returns a JSON representation of all collection properties and items in the collection.
-  
-  toJSON: ->
-    out = super
-    out.models = @map (mod) ->
-      (if mod?.toJSON then mod.toJSON() else mod)
-    return out
-
   # ### fetch(options, callback)
   # See [Syncing documentation](../manual/Syncing.html) for possible options.
   #

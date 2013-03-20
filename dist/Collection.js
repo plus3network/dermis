@@ -157,19 +157,6 @@ Collection = (function(_super) {
     return this.get('models');
   };
 
-  Collection.prototype.toJSON = function() {
-    var out;
-    out = Collection.__super__.toJSON.apply(this, arguments);
-    out.models = this.map(function(mod) {
-      if (mod != null ? mod.toJSON : void 0) {
-        return mod.toJSON();
-      } else {
-        return mod;
-      }
-    });
-    return out;
-  };
-
   Collection.prototype.fetch = function(opt, cb) {
     var _this = this;
     if (typeof opt === 'function' && !cb) {

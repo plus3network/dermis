@@ -1,6 +1,8 @@
 rivets = require 'rivets'
 syncAdapter = require './syncAdapter'
 Emitter = require 'emitter'
+mpath = require 'mpath'
+toJSON = require './toJSON'
 
 # # Model
 # Models are like standard objects but with a punch.
@@ -13,6 +15,8 @@ Emitter = require 'emitter'
 
 
 class Model extends Emitter
+  @_isModel: true
+
   # ### sync
   # Override this to change the sync adapter for the model.
   #
@@ -21,7 +25,7 @@ class Model extends Emitter
   sync: syncAdapter
 
   # ### casts
-  # An object of things to cast on .set()
+  # An object of things to cast on .set(). Works with collections, models, and functions.
   #
   # Example:
   #
@@ -50,7 +54,7 @@ class Model extends Emitter
   # ### get(key)
   # Returns the value for given key
 
-  get: (k) -> @_props[k]
+  get: (k) -> mpath.get k, @_props
 
   # ### set(key, val, silent=false)
   # Sets the value of key to val
@@ -69,9 +73,13 @@ class Model extends Emitter
       # cast val
       castModel = @casts[k]
       if castModel?
-        v = new castModel v
+        if castModel._isModel
+          v = new castModel v
+        else
+          v = castModel v
 
-      @_props[k] = v
+      mpath.set k, v, @_props
+
       unless silent
         @emit "change", k, v
         @emit "change:#{k}", v
@@ -91,7 +99,7 @@ class Model extends Emitter
   # ### has(key)
   # Returns true or false if the model has a property with the given name
 
-  has: (k) -> @_props[k]?
+  has: (k) -> mpath.get(k, @_props)?
 
   # ### remove(key, silent=false)
   # Removes property with given name from the model
@@ -113,7 +121,7 @@ class Model extends Emitter
   # ### toJSON()
   # Returns a standard object with all model properties
 
-  toJSON: -> @_props
+  toJSON: -> toJSON @_props
 
   # ### fetch(options, callback)
   # See [Syncing documentation](../manual/Syncing.html) for possible options.
@@ -139,8 +147,8 @@ class Model extends Emitter
         cb err if cb
         return
       @set res.body if typeof res.body is 'object'
-      @emit "fetched", res
       @_fetched = true
+      @emit "fetched", res
       cb err, res if cb
     return @
 
