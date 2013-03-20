@@ -2409,8 +2409,7 @@ request.put = function(url, data, fn){
 module.exports = request;
 
 });
-require.register("aheckmann-mpath/lib/index.js", function(exports, require, module){
-
+require.register("Contra-mpath/lib/index.js", function(exports, require, module){
 /**
  * Returns the value of object `o` at the given `path`.
  *
@@ -3862,9 +3861,9 @@ require.alias("RedVentures-reduce/index.js", "visionmedia-superagent/deps/reduce
 
 require.alias("visionmedia-superagent/lib/client.js", "visionmedia-superagent/index.js");
 
-require.alias("aheckmann-mpath/lib/index.js", "dermis/deps/mpath/lib/index.js");
-require.alias("aheckmann-mpath/lib/index.js", "dermis/deps/mpath/index.js");
-require.alias("aheckmann-mpath/lib/index.js", "aheckmann-mpath/index.js");
+require.alias("Contra-mpath/lib/index.js", "dermis/deps/mpath/lib/index.js");
+require.alias("Contra-mpath/lib/index.js", "dermis/deps/mpath/index.js");
+require.alias("Contra-mpath/lib/index.js", "Contra-mpath/index.js");
 
 require.alias("dermis/dist/dermis.js", "dermis/index.js");
 
