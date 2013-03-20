@@ -14,10 +14,9 @@ module.exports = toJSON = function(val) {
       }
       return _results;
     })();
+  } else if ((val != null) && typeof val.toJSON === 'function') {
+    return val.toJSON();
   } else if (typeof val === "object") {
-    if (typeof val.toJSON === 'function') {
-      return val.toJSON();
-    }
     out = {};
     for (k in val) {
       if (!__hasProp.call(val, k)) continue;

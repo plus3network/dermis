@@ -8,7 +8,7 @@ module.exports = adapter =
 
   set: (silent) -> (o, k, v) ->
     if typeof v isnt 'undefined'
-      return adapter.del o, k if v is null
+      return adapter.del o, k, silent if v is null
 
       if o._isCollection and /^\d+$/.test k
         o.replaceAt parseInt(k), v, silent
@@ -18,9 +18,9 @@ module.exports = adapter =
         o[k]=v
     return adapter.get o, k
 
-  del: (o, k) ->
+  del: (o, k, silent) ->
     if o._isCollection and /^\d+$/.test k
-      o.removeAt parseInt k
+      o.removeAt parseInt(k), silent
     else if o._isModel
       delete o._props[k]
     else

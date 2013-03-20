@@ -50,7 +50,7 @@ class Model extends Emitter
     @casts ?= {}
 
     @set @defaults if @defaults?
-    @set o
+    @set o unless Array.isArray o # prevent us from messing up collections
 
   # ### get(key)
   # Returns the value for given key

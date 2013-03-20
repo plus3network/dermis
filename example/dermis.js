@@ -2922,10 +2922,9 @@ module.exports = toJSON = function(val) {
       }
       return _results;
     })();
+  } else if ((val != null) && typeof val.toJSON === 'function') {
+    return val.toJSON();
   } else if (typeof val === "object") {
-    if (typeof val.toJSON === 'function') {
-      return val.toJSON();
-    }
     out = {};
     for (k in val) {
       if (!__hasProp.call(val, k)) continue;
@@ -2956,7 +2955,7 @@ module.exports = adapter = {
     return function(o, k, v) {
       if (typeof v !== 'undefined') {
         if (v === null) {
-          return adapter.del(o, k);
+          return adapter.del(o, k, silent);
         }
         if (o._isCollection && /^\d+$/.test(k)) {
           o.replaceAt(parseInt(k), v, silent);
@@ -2969,9 +2968,9 @@ module.exports = adapter = {
       return adapter.get(o, k);
     };
   },
-  del: function(o, k) {
+  del: function(o, k, silent) {
     if (o._isCollection && /^\d+$/.test(k)) {
-      o.removeAt(parseInt(k));
+      o.removeAt(parseInt(k), silent);
     } else if (o._isModel) {
       delete o._props[k];
     } else {
@@ -3023,7 +3022,9 @@ Model = (function(_super) {
     if (this.defaults != null) {
       this.set(this.defaults);
     }
-    this.set(o);
+    if (!Array.isArray(o)) {
+      this.set(o);
+    }
   }
 
   Model.prototype.get = function(k) {
@@ -3250,11 +3251,7 @@ Collection = (function(_super) {
       }
       return this;
     }
-    if (this.model && !(o instanceof Model)) {
-      mod = new this.model(o);
-    } else {
-      mod = o;
-    }
+    mod = this._processModel(o);
     this.get('models').push(mod);
     this.set('models', this.get('models'), silent);
     if (!silent) {
@@ -3285,6 +3282,23 @@ Collection = (function(_super) {
 
   Collection.prototype.removeAt = function(idx, silent) {
     return this.remove(this.at(idx), silent);
+  };
+
+  Collection.prototype.replace = function(o, nu, silent) {
+    var idx;
+    idx = this.indexOf(o);
+    if (idx !== -1) {
+      this.replaceAt(idx, nu, silent);
+    }
+    return this;
+  };
+
+  Collection.prototype.replaceAt = function(idx, nu, silent) {
+    var mods;
+    mods = this.get('models');
+    mods[idx] = this._processModel(nu);
+    this.set('models', mods, silent);
+    return this;
   };
 
   Collection.prototype.reset = function(o, silent) {
@@ -3395,6 +3409,15 @@ Collection = (function(_super) {
       }
     });
     return this;
+  };
+
+  Collection.prototype._processModel = function(o) {
+    var mod;
+    if (this.model && !(o instanceof Model)) {
+      return mod = new this.model(o);
+    } else {
+      return mod = o;
+    }
   };
 
   return Collection;

@@ -156,7 +156,7 @@ describe("model", function() {
       return done();
     });
     it("should be able to set using nested paths with collections", function(done) {
-      var TestModel, mod;
+      var Friends, TestModel, mod;
       TestModel = (function(_super) {
 
         __extends(TestModel, _super);
@@ -168,18 +168,72 @@ describe("model", function() {
         return TestModel;
 
       })(dermis.Model);
+      Friends = (function(_super) {
+
+        __extends(Friends, _super);
+
+        function Friends() {
+          return Friends.__super__.constructor.apply(this, arguments);
+        }
+
+        Friends.prototype.model = TestModel;
+
+        return Friends;
+
+      })(dermis.Collection);
       mod = new TestModel({
-        friends: new dermis.Collection([
-          new TestModel({
+        friends: new Friends([
+          {
+            name: "Tobias",
             name: "Tobias"
-          }), new TestModel({
-            name: "Tobias"
-          })
+          }
         ])
       });
       mod.set("friends.0.name", "Gobias");
-      mod.toJSON().friends[0].name.should.equal("Gobias");
+      mod.toJSON().friends.models[0].name.should.equal("Gobias");
       mod.get("friends.0.name").should.equal("Gobias");
+      return done();
+    });
+    it("should be able to replace using nested paths with collections", function(done) {
+      var Friends, TestModel, mod;
+      TestModel = (function(_super) {
+
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          return TestModel.__super__.constructor.apply(this, arguments);
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      Friends = (function(_super) {
+
+        __extends(Friends, _super);
+
+        function Friends() {
+          return Friends.__super__.constructor.apply(this, arguments);
+        }
+
+        Friends.prototype.model = TestModel;
+
+        return Friends;
+
+      })(dermis.Collection);
+      mod = new TestModel({
+        friends: new Friends([
+          {
+            name: "Tobias",
+            name: "Tobias"
+          }
+        ])
+      });
+      mod.set("friends.0", {
+        name: "Gobias2"
+      });
+      mod.toJSON().friends.models[0].name.should.equal("Gobias2");
+      mod.get('friends').at(0).get('name').should.equal("Gobias2");
+      mod.get("friends.0.name").should.equal("Gobias2");
       return done();
     });
     it("should be able to set silently", function(done) {
@@ -384,6 +438,35 @@ describe("model", function() {
       });
       mod.toJSON().should.eql({
         wut: 2
+      });
+      return done();
+    });
+    it("should be able list props with reasonable nesting", function(done) {
+      var friends, mod;
+      friends = new dermis.Collection([
+        new dermis.Model({
+          name: "tobias"
+        }), new dermis.Model({
+          name: "gobias"
+        })
+      ]);
+      friends.set("type", "best");
+      mod = new dermis.Model({
+        name: "Bob",
+        friends: friends
+      });
+      mod.toJSON().should.eql({
+        name: "Bob",
+        friends: {
+          type: "best",
+          models: [
+            {
+              name: "tobias"
+            }, {
+              name: "gobias"
+            }
+          ]
+        }
       });
       return done();
     });

@@ -45,11 +45,8 @@ class Collection extends Model
     if Array.isArray o
       @add i, silent for i in o
       return @
-    if @model and !(o instanceof Model)
-      mod = new @model o
-    else
-      mod = o
 
+    mod = @_processModel o
     @get('models').push mod
     @set 'models', @get('models'), silent
     unless silent
@@ -84,6 +81,32 @@ class Collection extends Model
 
   removeAt: (idx, silent) ->
     @remove @at(idx), silent
+
+  # ### replace(toReplace, obj, silent=false)
+  # Replaces toReplace with obj in the collection
+  #
+  # Will emit ```change:models``` event unless silent is true
+  #
+  # Returns the collection for chaining purposes.
+
+  replace: (o, nu, silent) ->
+    idx = @indexOf o
+    if idx isnt -1
+      @replaceAt idx, nu, silent
+    return @
+
+  # ### replaceAt(index, obj, silent=false)
+  # Replaces the object at the given index with the provided object.
+  #
+  # Will emit ```change:models``` unless silent is true
+  #
+  # Returns the collection for chaining purposes.
+
+  replaceAt: (idx, nu, silent) ->
+    mods = @get 'models'
+    mods[idx] = @_processModel nu
+    @set 'models', mods, silent
+    return @
 
   # ### reset(newItems, silent=false)
   # Removes all items from the collection.
@@ -215,5 +238,11 @@ class Collection extends Model
       @emit "fetched", res
       cb err, res if cb
     return @
+
+  _processModel: (o) ->
+    if @model and !(o instanceof Model)
+      mod = new @model o
+    else
+      mod = o
 
 module.exports = Collection

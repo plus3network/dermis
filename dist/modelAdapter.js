@@ -15,7 +15,7 @@ module.exports = adapter = {
     return function(o, k, v) {
       if (typeof v !== 'undefined') {
         if (v === null) {
-          return adapter.del(o, k);
+          return adapter.del(o, k, silent);
         }
         if (o._isCollection && /^\d+$/.test(k)) {
           o.replaceAt(parseInt(k), v, silent);
@@ -28,9 +28,9 @@ module.exports = adapter = {
       return adapter.get(o, k);
     };
   },
-  del: function(o, k) {
+  del: function(o, k, silent) {
     if (o._isCollection && /^\d+$/.test(k)) {
-      o.removeAt(parseInt(k));
+      o.removeAt(parseInt(k), silent);
     } else if (o._isModel) {
       delete o._props[k];
     } else {

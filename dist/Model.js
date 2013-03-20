@@ -39,7 +39,9 @@ Model = (function(_super) {
     if (this.defaults != null) {
       this.set(this.defaults);
     }
-    this.set(o);
+    if (!Array.isArray(o)) {
+      this.set(o);
+    }
   }
 
   Model.prototype.get = function(k) {

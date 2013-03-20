@@ -68,15 +68,36 @@ describe "model", ->
     it "should be able to set using nested paths with collections", (done) ->
       class TestModel extends dermis.Model
 
+      class Friends extends dermis.Collection
+        model: TestModel
+
       mod = new TestModel
-        friends: new dermis.Collection [
-          new TestModel(name: "Tobias"),
-          new TestModel(name: "Tobias")
+        friends: new Friends [
+          name: "Tobias",
+          name: "Tobias"
         ]
 
       mod.set "friends.0.name", "Gobias"
-      mod.toJSON().friends[0].name.should.equal "Gobias"
+      mod.toJSON().friends.models[0].name.should.equal "Gobias"
       mod.get("friends.0.name").should.equal "Gobias"
+      done()
+
+    it "should be able to replace using nested paths with collections", (done) ->
+      class TestModel extends dermis.Model
+
+      class Friends extends dermis.Collection
+        model: TestModel
+        
+      mod = new TestModel
+        friends: new Friends [
+          name: "Tobias",
+          name: "Tobias"
+        ]
+
+      mod.set "friends.0", name: "Gobias2"
+      mod.toJSON().friends.models[0].name.should.equal "Gobias2"
+      mod.get('friends').at(0).get('name').should.equal "Gobias2"
+      mod.get("friends.0.name").should.equal "Gobias2"
       done()
 
     it "should be able to set silently", (done) ->
@@ -161,6 +182,30 @@ describe "model", ->
       mod = new TestModel wut: 2
       mod.toJSON().should.eql wut: 2
       done()
+
+    it "should be able list props with reasonable nesting", (done) ->
+      friends = new dermis.Collection [
+        new dermis.Model(name: "tobias"),
+        new dermis.Model(name: "gobias")
+      ]
+      friends.set "type", "best"
+
+      mod = new dermis.Model
+        name: "Bob"
+        friends: friends
+
+      mod.toJSON().should.eql
+        name: "Bob"
+        friends:
+          type: "best"
+          models: [
+            name: "tobias"
+          ,
+            name: "gobias"
+          ]
+
+      done()
+
 
     it "should be able to list props with heavy nesting", (done) ->
       class TestModel extends dermis.Model
