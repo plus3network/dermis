@@ -43,6 +43,18 @@ describe "model", ->
 
       mod.set "wut", 2
 
+    it "should be able to set using nested paths", (done) ->
+      class TestModel extends dermis.Model
+
+      mod = new TestModel
+        wut: new TestModel(wut: new TestModel(name: "Tobias"))
+        friends: [new TestModel(name: "Tobias"), new TestModel(name: "Tobias")]
+
+      mod.set "wut.wut.name", "Gobias"
+      mod.toJSON().wut.wut.name.should.equal "Gobias"
+      mod.get("wut.wut.name").should.equal "Gobias"
+      done()
+
     it "should be able to set silently", (done) ->
       class TestModel extends dermis.Model
 

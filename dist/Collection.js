@@ -15,6 +15,10 @@ Collection = (function(_super) {
 
   __extends(Collection, _super);
 
+  Collection._isCollection = true;
+
+  Collection.prototype._isCollection = true;
+
   function Collection(items) {
     Collection.__super__.constructor.apply(this, arguments);
     if (!this.has('models')) {

@@ -19,6 +19,7 @@
     "dist/syncAdapter.js",
     "dist/util.js",
     "dist/toJSON.js",
+    "dist/modelAdapter.js",
     
     "dist/Model.js",
     "dist/Collection.js",

@@ -15,6 +15,8 @@ Model = require './Model'
 # To extend or create a custom collection see the [Extending documentation](../manual/Extending.html)
 
 class Collection extends Model
+  @_isCollection: true
+  _isCollection: true
 
   # ### constructor(items)
   # Creates a new Collection

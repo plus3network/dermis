@@ -2,6 +2,7 @@ rivets = require 'rivets'
 syncAdapter = require './syncAdapter'
 Emitter = require 'emitter'
 mpath = require 'mpath'
+adapter = require './modelAdapter'
 toJSON = require './toJSON'
 
 # # Model
@@ -13,9 +14,9 @@ toJSON = require './toJSON'
 #
 # To extend or create a custom model see the [Extending documentation](../manual/Extending.html)
 
-
 class Model extends Emitter
   @_isModel: true
+  _isModel: true
 
   # ### sync
   # Override this to change the sync adapter for the model.
@@ -54,7 +55,7 @@ class Model extends Emitter
   # ### get(key)
   # Returns the value for given key
 
-  get: (k) -> mpath.get k, @_props
+  get: (k) -> mpath.get k, @_props, adapter.get
 
   # ### set(key, val, silent=false)
   # Sets the value of key to val
@@ -78,7 +79,7 @@ class Model extends Emitter
         else
           v = castModel v
 
-      mpath.set k, v, @_props
+      mpath.set k, v, @_props, adapter.set silent
 
       unless silent
         @emit "change", k, v
@@ -93,13 +94,13 @@ class Model extends Emitter
   # Returns the model for chaining purposes
 
   clear: (silent) ->
-    @remove k, silent for k,v of @_props
+    @remove k, silent for own k,v of @_props
     return @
 
   # ### has(key)
   # Returns true or false if the model has a property with the given name
 
-  has: (k) -> mpath.get(k, @_props)?
+  has: (k) -> @get(k)?
 
   # ### remove(key, silent=false)
   # Removes property with given name from the model
@@ -108,8 +109,8 @@ class Model extends Emitter
   #
   # Returns the model for chaining purposes
 
-  remove: (k, silent) -> 
-    delete @_props[k]
+  remove: (k, silent) ->
+    @set k, null, true
     unless silent
       @emit "change", k
       @emit "change:#{k}"

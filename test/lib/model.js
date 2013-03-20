@@ -103,6 +103,38 @@ describe("model", function() {
       });
       return mod.set("wut", 2);
     });
+    it("should be able to set using nested paths", function(done) {
+      var TestModel, mod;
+      TestModel = (function(_super) {
+
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          return TestModel.__super__.constructor.apply(this, arguments);
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel({
+        wut: new TestModel({
+          wut: new TestModel({
+            name: "Tobias"
+          })
+        }),
+        friends: [
+          new TestModel({
+            name: "Tobias"
+          }), new TestModel({
+            name: "Tobias"
+          })
+        ]
+      });
+      mod.set("wut.wut.name", "Gobias");
+      mod.toJSON().wut.wut.name.should.equal("Gobias");
+      mod.get("wut.wut.name").should.equal("Gobias");
+      return done();
+    });
     it("should be able to set silently", function(done) {
       var TestModel, mod;
       TestModel = (function(_super) {
