@@ -48,11 +48,35 @@ describe "model", ->
 
       mod = new TestModel
         wut: new TestModel(wut: new TestModel(name: "Tobias"))
-        friends: [new TestModel(name: "Tobias"), new TestModel(name: "Tobias")]
 
       mod.set "wut.wut.name", "Gobias"
       mod.toJSON().wut.wut.name.should.equal "Gobias"
       mod.get("wut.wut.name").should.equal "Gobias"
+      done()
+
+    it "should be able to set using nested paths with arrays", (done) ->
+      class TestModel extends dermis.Model
+
+      mod = new TestModel
+        friends: [new TestModel(name: "Tobias"), new TestModel(name: "Tobias")]
+
+      mod.set "friends.0.name", "Gobias"
+      mod.toJSON().friends[0].name.should.equal "Gobias"
+      mod.get("friends.0.name").should.equal "Gobias"
+      done()
+
+    it "should be able to set using nested paths with collections", (done) ->
+      class TestModel extends dermis.Model
+
+      mod = new TestModel
+        friends: new dermis.Collection [
+          new TestModel(name: "Tobias"),
+          new TestModel(name: "Tobias")
+        ]
+
+      mod.set "friends.0.name", "Gobias"
+      mod.toJSON().friends[0].name.should.equal "Gobias"
+      mod.get("friends.0.name").should.equal "Gobias"
       done()
 
     it "should be able to set silently", (done) ->
@@ -140,19 +164,37 @@ describe "model", ->
 
     it "should be able to list props with heavy nesting", (done) ->
       class TestModel extends dermis.Model
+        casts:
+          friends: Friends
+
+      class Friends extends dermis.Collection
+        model: TestModel
+
+      robias = new TestModel(name: "Robias", friends: [new TestModel(name:"Gobias")])
 
       mod = new TestModel
-        wut: new TestModel(wut: new TestModel(name: "Tobias"))
-        friends: [new TestModel(name: "Tobias"), new TestModel(name: "Tobias")]
+        name: "Gobias"
+        bestFriend: robias
+        friends: [
+          robias,
+          new TestModel(name: "Fobias")
+        ]
 
       mod.toJSON().should.eql
-        wut:
-          wut:
-            name: "Tobias"
+        name: "Gobias"
+        bestFriend:
+          name: "Robias"
+          friends: [
+            name: "Gobias"
+          ]
+
         friends: [
-          name: "Tobias"
+          name: "Robias"
+          friends: [
+            name: "Gobias"
+          ]
         ,
-          name: "Tobias"
+          name: "Fobias"
         ]
       done()
 

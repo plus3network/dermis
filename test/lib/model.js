@@ -121,7 +121,27 @@ describe("model", function() {
           wut: new TestModel({
             name: "Tobias"
           })
-        }),
+        })
+      });
+      mod.set("wut.wut.name", "Gobias");
+      mod.toJSON().wut.wut.name.should.equal("Gobias");
+      mod.get("wut.wut.name").should.equal("Gobias");
+      return done();
+    });
+    it("should be able to set using nested paths with arrays", function(done) {
+      var TestModel, mod;
+      TestModel = (function(_super) {
+
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          return TestModel.__super__.constructor.apply(this, arguments);
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel({
         friends: [
           new TestModel({
             name: "Tobias"
@@ -130,9 +150,36 @@ describe("model", function() {
           })
         ]
       });
-      mod.set("wut.wut.name", "Gobias");
-      mod.toJSON().wut.wut.name.should.equal("Gobias");
-      mod.get("wut.wut.name").should.equal("Gobias");
+      mod.set("friends.0.name", "Gobias");
+      mod.toJSON().friends[0].name.should.equal("Gobias");
+      mod.get("friends.0.name").should.equal("Gobias");
+      return done();
+    });
+    it("should be able to set using nested paths with collections", function(done) {
+      var TestModel, mod;
+      TestModel = (function(_super) {
+
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          return TestModel.__super__.constructor.apply(this, arguments);
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel({
+        friends: new dermis.Collection([
+          new TestModel({
+            name: "Tobias"
+          }), new TestModel({
+            name: "Tobias"
+          })
+        ])
+      });
+      mod.set("friends.0.name", "Gobias");
+      mod.toJSON().friends[0].name.should.equal("Gobias");
+      mod.get("friends.0.name").should.equal("Gobias");
       return done();
     });
     it("should be able to set silently", function(done) {
@@ -341,7 +388,7 @@ describe("model", function() {
       return done();
     });
     return it("should be able to list props with heavy nesting", function(done) {
-      var TestModel, mod;
+      var Friends, TestModel, mod, robias;
       TestModel = (function(_super) {
 
         __extends(TestModel, _super);
@@ -350,34 +397,63 @@ describe("model", function() {
           return TestModel.__super__.constructor.apply(this, arguments);
         }
 
+        TestModel.prototype.casts = {
+          friends: Friends
+        };
+
         return TestModel;
 
       })(dermis.Model);
-      mod = new TestModel({
-        wut: new TestModel({
-          wut: new TestModel({
-            name: "Tobias"
-          })
-        }),
+      Friends = (function(_super) {
+
+        __extends(Friends, _super);
+
+        function Friends() {
+          return Friends.__super__.constructor.apply(this, arguments);
+        }
+
+        Friends.prototype.model = TestModel;
+
+        return Friends;
+
+      })(dermis.Collection);
+      robias = new TestModel({
+        name: "Robias",
         friends: [
           new TestModel({
-            name: "Tobias"
-          }), new TestModel({
-            name: "Tobias"
+            name: "Gobias"
+          })
+        ]
+      });
+      mod = new TestModel({
+        name: "Gobias",
+        bestFriend: robias,
+        friends: [
+          robias, new TestModel({
+            name: "Fobias"
           })
         ]
       });
       mod.toJSON().should.eql({
-        wut: {
-          wut: {
-            name: "Tobias"
-          }
+        name: "Gobias",
+        bestFriend: {
+          name: "Robias",
+          friends: [
+            {
+              name: "Gobias"
+            }
+          ]
         },
         friends: [
           {
-            name: "Tobias"
+            name: "Robias",
+            friends: [
+              {
+                name: "Gobias"
+              }
+            ]
           }, {
-            name: "Tobias"
+            name: "Fobias"
           }
         ]
       });
