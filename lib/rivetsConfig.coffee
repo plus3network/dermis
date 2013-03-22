@@ -1,3 +1,5 @@
+prevent = require 'prevent'
+
 # # Binding Formatters
 # dermis provides some default data binding formatters to help you get going as quickly as possible
 #
@@ -129,7 +131,7 @@ cfg =
     cancelEvent: (v) ->
       return v unless v?
       return (e) ->
-        e.preventDefault()
+        prevent e
         v.call @, e
         return false
 
