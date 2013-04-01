@@ -9,7 +9,7 @@
     "anthonyshort/event-splitter": "*",
     "visionmedia/page.js": "*",
     "visionmedia/superagent": "*",
-    "Contra/mpath": "patch-1",
+    "aheckmann/mpath": "*",
     "yields/prevent": "*"
   },
   "main": "dist/dermis.js",

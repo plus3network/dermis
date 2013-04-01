@@ -175,6 +175,24 @@ describe "model", ->
 
       mod.set "dog", name: "Fido"
 
+  describe "accessors", ->
+    it "should be able to add accessors (models)", (done) ->
+      called = false
+
+      class TestModel extends dermis.Model
+        accessors:
+          name:
+            set: (v) ->
+              v.should.equal "Fido"
+
+            get: -> "Chollo"
+
+      mod = new TestModel
+
+      mod.set "name", "Fido"
+      mod.get("name").should.equal "Chollo"
+      done()
+
   describe "toJSON", ->
     it "should be able to list props", (done) ->
       class TestModel extends dermis.Model

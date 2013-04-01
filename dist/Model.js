@@ -27,14 +27,19 @@ Model = (function(_super) {
 
   Model.prototype.casts = null;
 
+  Model.prototype.casts = null;
+
   Model.prototype.defaults = null;
 
   function Model(o) {
-    var _ref;
+    var _ref, _ref1;
     this._fetched = false;
     this._props = {};
     if ((_ref = this.casts) == null) {
       this.casts = {};
+    }
+    if ((_ref1 = this.accessors) == null) {
+      this.accessors = {};
     }
     if (this.defaults != null) {
       this.set(this.defaults);
@@ -45,11 +50,15 @@ Model = (function(_super) {
   }
 
   Model.prototype.get = function(k) {
+    var _ref;
+    if ((_ref = this.accessors[k]) != null ? _ref.get : void 0) {
+      return this.accessors[k].get();
+    }
     return mpath.get(k, this._props, adapter.get);
   };
 
   Model.prototype.set = function(k, v, silent) {
-    var castModel, ky, vy;
+    var castModel, ky, vy, _ref;
     if (k == null) {
       return;
     }
@@ -69,7 +78,11 @@ Model = (function(_super) {
           v = castModel(v);
         }
       }
-      mpath.set(k, v, this._props, adapter.set(silent));
+      if ((_ref = this.accessors[k]) != null ? _ref.set : void 0) {
+        this.accessors[k].set(v);
+      } else {
+        mpath.set(k, v, this._props, adapter.set(silent));
+      }
       if (!silent) {
         this.emit("change", k, v);
         this.emit("change:" + k, v);

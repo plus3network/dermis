@@ -207,7 +207,25 @@ require.relative = function(parent) {
 
   return localRequire;
 };
+require.register("component-indexof/index.js", function(exports, require, module){
+
+var indexOf = [].indexOf;
+
+module.exports = function(arr, obj){
+  if (indexOf) return arr.indexOf(obj);
+  for (var i = 0; i < arr.length; ++i) {
+    if (arr[i] === obj) return i;
+  }
+  return -1;
+};
+});
 require.register("component-emitter/index.js", function(exports, require, module){
+
+/**
+ * Module dependencies.
+ */
+
+var index = require('indexof');
 
 /**
  * Expose `Emitter`.
@@ -312,7 +330,7 @@ Emitter.prototype.removeAllListeners = function(event, fn){
   }
 
   // remove specific handler
-  var i = callbacks.indexOf(fn._off || fn);
+  var i = index(callbacks, fn._off || fn);
   if (~i) callbacks.splice(i, 1);
   return this;
 };
@@ -1924,6 +1942,7 @@ function Request(method, url) {
   this.method = method;
   this.url = url;
   this.header = {};
+  this._header = {};
   this.set('X-Requested-With', 'XMLHttpRequest');
   this.on('end', function(){
     var res = new Response(self.xhr);
@@ -2008,8 +2027,21 @@ Request.prototype.set = function(field, val){
     }
     return this;
   }
-  this.header[field.toLowerCase()] = val;
+  this._header[field.toLowerCase()] = val;
+  this.header[field] = val;
   return this;
+};
+
+/**
+ * Get case-insensitive header `field` value.
+ *
+ * @param {String} field
+ * @return {String}
+ * @api private
+ */
+
+Request.prototype.getHeader = function(field){
+  return this._header[field.toLowerCase()];
 };
 
 /**
@@ -2112,7 +2144,7 @@ Request.prototype.query = function(val){
 
 Request.prototype.send = function(data){
   var obj = isObject(data);
-  var type = this.header['content-type'];
+  var type = this.getHeader('Content-Type');
 
   // merge
   if (obj && isObject(this._data)) {
@@ -2121,7 +2153,7 @@ Request.prototype.send = function(data){
     }
   } else if ('string' == typeof data) {
     if (!type) this.type('form');
-    type = this.header['content-type'];
+    type = this.getHeader('Content-Type');
     if ('application/x-www-form-urlencoded' == type) {
       this._data = this._data
         ? this._data + '&' + data
@@ -2227,6 +2259,14 @@ Request.prototype.end = function(fn){
     self.emit('end');
   };
 
+  // progress
+  if (xhr.upload) {
+    xhr.upload.onprogress = function(e){
+      e.percent = e.loaded / e.total * 100;
+      self.emit('progress', e);
+    };
+  }
+
   // timeout
   if (timeout && !this._timer) {
     this._timer = setTimeout(function(){
@@ -2248,12 +2288,13 @@ Request.prototype.end = function(fn){
   // body
   if ('GET' != this.method && 'HEAD' != this.method && 'string' != typeof data) {
     // serialize stuff
-    var serialize = request.serialize[this.header['content-type']];
+    var serialize = request.serialize[this.getHeader('Content-Type')];
     if (serialize) data = serialize(data);
   }
 
   // set header fields
   for (var field in this.header) {
+    if (null == this.header[field]) continue;
     xhr.setRequestHeader(field, this.header[field]);
   }
 
@@ -2409,7 +2450,7 @@ request.put = function(url, data, fn){
 module.exports = request;
 
 });
-require.register("Contra-mpath/lib/index.js", function(exports, require, module){
+require.register("aheckmann-mpath/lib/index.js", function(exports, require, module){
 /**
  * Returns the value of object `o` at the given `path`.
  *
@@ -3034,14 +3075,19 @@ Model = (function(_super) {
 
   Model.prototype.casts = null;
 
+  Model.prototype.casts = null;
+
   Model.prototype.defaults = null;
 
   function Model(o) {
-    var _ref;
+    var _ref, _ref1;
     this._fetched = false;
     this._props = {};
     if ((_ref = this.casts) == null) {
       this.casts = {};
+    }
+    if ((_ref1 = this.accessors) == null) {
+      this.accessors = {};
     }
     if (this.defaults != null) {
       this.set(this.defaults);
@@ -3052,11 +3098,15 @@ Model = (function(_super) {
   }
 
   Model.prototype.get = function(k) {
+    var _ref;
+    if ((_ref = this.accessors[k]) != null ? _ref.get : void 0) {
+      return this.accessors[k].get();
+    }
     return mpath.get(k, this._props, adapter.get);
   };
 
   Model.prototype.set = function(k, v, silent) {
-    var castModel, ky, vy;
+    var castModel, ky, vy, _ref;
     if (k == null) {
       return;
     }
@@ -3076,7 +3126,11 @@ Model = (function(_super) {
           v = castModel(v);
         }
       }
-      mpath.set(k, v, this._props, adapter.set(silent));
+      if ((_ref = this.accessors[k]) != null ? _ref.set : void 0) {
+        this.accessors[k].set(v);
+      } else {
+        mpath.set(k, v, this._props, adapter.set(silent));
+      }
       if (!silent) {
         this.emit("change", k, v);
         this.emit("change:" + k, v);
@@ -3865,6 +3919,7 @@ module.exports = dermis;
 
 });
 require.alias("component-emitter/index.js", "dermis/deps/emitter/index.js");
+require.alias("component-indexof/index.js", "component-emitter/deps/indexof/index.js");
 
 require.alias("apily-guid/index.js", "dermis/deps/guid/index.js");
 
@@ -3881,14 +3936,15 @@ require.alias("visionmedia-page.js/index.js", "dermis/deps/page/index.js");
 require.alias("visionmedia-superagent/lib/client.js", "dermis/deps/superagent/lib/client.js");
 require.alias("visionmedia-superagent/lib/client.js", "dermis/deps/superagent/index.js");
 require.alias("component-emitter/index.js", "visionmedia-superagent/deps/emitter/index.js");
+require.alias("component-indexof/index.js", "component-emitter/deps/indexof/index.js");
 
 require.alias("RedVentures-reduce/index.js", "visionmedia-superagent/deps/reduce/index.js");
 
 require.alias("visionmedia-superagent/lib/client.js", "visionmedia-superagent/index.js");
 
-require.alias("Contra-mpath/lib/index.js", "dermis/deps/mpath/lib/index.js");
-require.alias("Contra-mpath/lib/index.js", "dermis/deps/mpath/index.js");
-require.alias("Contra-mpath/lib/index.js", "Contra-mpath/index.js");
+require.alias("aheckmann-mpath/lib/index.js", "dermis/deps/mpath/lib/index.js");
+require.alias("aheckmann-mpath/lib/index.js", "dermis/deps/mpath/index.js");
+require.alias("aheckmann-mpath/lib/index.js", "aheckmann-mpath/index.js");
 
 require.alias("yields-prevent/index.js", "dermis/deps/prevent/index.js");
 

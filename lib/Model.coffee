@@ -34,6 +34,13 @@ class Model extends Emitter
   
   casts: null
 
+  # ### accessors
+  # An object of getters/setters
+  #
+  # Format: ```key :{get: function, set: function(val)}```
+  
+  casts: null
+
   # ### defaults
   # Default values to be .set() after .construct()
 
@@ -47,7 +54,9 @@ class Model extends Emitter
   constructor: (o) ->
     @_fetched = false
     @_props = {}
+
     @casts ?= {}
+    @accessors ?= {}
 
     @set @defaults if @defaults?
     @set o unless Array.isArray o # prevent us from messing up collections
@@ -55,7 +64,9 @@ class Model extends Emitter
   # ### get(key)
   # Returns the value for given key
 
-  get: (k) -> mpath.get k, @_props, adapter.get
+  get: (k) ->
+    return @accessors[k].get() if @accessors[k]?.get
+    return mpath.get k, @_props, adapter.get
 
   # ### set(key, val, silent=false)
   # Sets the value of key to val
@@ -79,7 +90,10 @@ class Model extends Emitter
         else
           v = castModel v
 
-      mpath.set k, v, @_props, adapter.set silent
+      if @accessors[k]?.set
+        @accessors[k].set v
+      else
+        mpath.set k, v, @_props, adapter.set silent
 
       unless silent
         @emit "change", k, v

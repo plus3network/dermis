@@ -419,6 +419,38 @@ describe("model", function() {
       });
     });
   });
+  describe("accessors", function() {
+    return it("should be able to add accessors (models)", function(done) {
+      var TestModel, called, mod;
+      called = false;
+      TestModel = (function(_super) {
+
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          return TestModel.__super__.constructor.apply(this, arguments);
+        }
+
+        TestModel.prototype.accessors = {
+          name: {
+            set: function(v) {
+              return v.should.equal("Fido");
+            },
+            get: function() {
+              return "Chollo";
+            }
+          }
+        };
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel;
+      mod.set("name", "Fido");
+      mod.get("name").should.equal("Chollo");
+      return done();
+    });
+  });
   describe("toJSON", function() {
     it("should be able to list props", function(done) {
       var TestModel, mod;
