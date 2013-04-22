@@ -39,12 +39,19 @@ class Model extends Emitter
   #
   # Format: ```key :{get: function, set: function(val)}```
   
-  casts: null
+  accessors: null
 
   # ### defaults
   # Default values to be .set() after .construct()
 
   defaults: null
+
+  # ### format
+  # Function that formats data on fetch
+  #
+  # Format: ```function(val)```
+  
+  accessors: null
 
   # ### constructor(properties)
   # Creates a new Model
@@ -161,6 +168,8 @@ class Model extends Emitter
         @emit "fetchError", err
         cb err if cb
         return
+
+      res.body = @format res.body if @format?
       @set res.body if typeof res.body is 'object'
       @_fetched = true
       @emit "fetched", res

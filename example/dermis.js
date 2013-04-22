@@ -3075,9 +3075,11 @@ Model = (function(_super) {
 
   Model.prototype.casts = null;
 
-  Model.prototype.casts = null;
+  Model.prototype.accessors = null;
 
   Model.prototype.defaults = null;
+
+  Model.prototype.accessors = null;
 
   function Model(o) {
     var _ref, _ref1;
@@ -3183,6 +3185,9 @@ Model = (function(_super) {
           cb(err);
         }
         return;
+      }
+      if (_this.format != null) {
+        res.body = _this.format(res.body);
       }
       if (typeof res.body === 'object') {
         _this.set(res.body);
