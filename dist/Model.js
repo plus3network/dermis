@@ -31,11 +31,12 @@ Model = (function(_super) {
 
   Model.prototype.defaults = null;
 
-  Model.prototype.accessors = null;
+  Model.prototype.format = null;
+
+  Model.prototype._fetched = false;
 
   function Model(o) {
     var _ref, _ref1;
-    this._fetched = false;
     this._props = {};
     if ((_ref = this.casts) == null) {
       this.casts = {};
@@ -45,6 +46,9 @@ Model = (function(_super) {
     }
     if (this.defaults != null) {
       this.set(this.defaults);
+    }
+    if (this.format != null) {
+      o = this.format(o);
     }
     if (!Array.isArray(o)) {
       this.set(o);

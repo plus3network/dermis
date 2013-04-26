@@ -192,6 +192,7 @@ Collection = (function(_super) {
       if (Array.isArray(res.body)) {
         _this.reset(res.body);
       }
+      _this._fetched = true;
       _this.emit("fetched", res);
       if (cb) {
         return cb(err, res);
@@ -203,10 +204,11 @@ Collection = (function(_super) {
   Collection.prototype._processModel = function(o) {
     var mod;
     if (this.model && !(o instanceof Model)) {
-      return mod = new this.model(o);
+      mod = new this.model(o);
     } else {
-      return mod = o;
+      mod = o;
     }
+    return mod;
   };
 
   return Collection;

@@ -235,6 +235,7 @@ class Collection extends Model
         cb err if cb
         return
       @reset res.body if Array.isArray res.body
+      @_fetched = true
       @emit "fetched", res
       cb err, res if cb
     return @
@@ -244,5 +245,6 @@ class Collection extends Model
       mod = new @model o
     else
       mod = o
+    return mod
 
 module.exports = Collection

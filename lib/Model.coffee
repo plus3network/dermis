@@ -51,7 +51,9 @@ class Model extends Emitter
   #
   # Format: ```function(val)```
   
-  accessors: null
+  format: null
+
+  _fetched: false
 
   # ### constructor(properties)
   # Creates a new Model
@@ -59,13 +61,13 @@ class Model extends Emitter
   # properties object is optional but if given it will .set() them
 
   constructor: (o) ->
-    @_fetched = false
     @_props = {}
 
     @casts ?= {}
     @accessors ?= {}
 
     @set @defaults if @defaults?
+    o = @format o if @format?
     @set o unless Array.isArray o # prevent us from messing up collections
 
   # ### get(key)

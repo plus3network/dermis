@@ -3079,11 +3079,12 @@ Model = (function(_super) {
 
   Model.prototype.defaults = null;
 
-  Model.prototype.accessors = null;
+  Model.prototype.format = null;
+
+  Model.prototype._fetched = false;
 
   function Model(o) {
     var _ref, _ref1;
-    this._fetched = false;
     this._props = {};
     if ((_ref = this.casts) == null) {
       this.casts = {};
@@ -3093,6 +3094,9 @@ Model = (function(_super) {
     }
     if (this.defaults != null) {
       this.set(this.defaults);
+    }
+    if (this.format != null) {
+      o = this.format(o);
     }
     if (!Array.isArray(o)) {
       this.set(o);
@@ -3486,6 +3490,7 @@ Collection = (function(_super) {
       if (Array.isArray(res.body)) {
         _this.reset(res.body);
       }
+      _this._fetched = true;
       _this.emit("fetched", res);
       if (cb) {
         return cb(err, res);
@@ -3497,10 +3502,11 @@ Collection = (function(_super) {
   Collection.prototype._processModel = function(o) {
     var mod;
     if (this.model && !(o instanceof Model)) {
-      return mod = new this.model(o);
+      mod = new this.model(o);
     } else {
-      return mod = o;
+      mod = o;
     }
+    return mod;
   };
 
   return Collection;
