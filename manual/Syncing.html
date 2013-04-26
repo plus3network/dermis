@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Syncing</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../style.css" />
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.0/jquery-1.8.0.min.js'></script>
+</head>
+<body>
+  <div id="area">
+    <div class='file-header'>
+              <a href="https://github.com/wearefractal/dermis/blob/master/manual/Syncing.md">
+          <strong title='manual/Syncing.md'>Syncing.md</strong>
+          <small>View source</small>
+        </a>
+          </div>
+
+    <table cellpadding="0" cellspacing="0" class="extension-md">
+      <thead>
+        <tr>
+          <th class="docs">
+          </th>
+          <th class="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+                                      
+          <tr id="Syncing" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#Syncing">&#182;</a>
+              </div>
+              <h1>Syncing</h1>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-1" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-1">&#182;</a>
+              </div>
+              <p>Collections and Models in dermis provide an easy way to sync data with the server via REST.</p>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="Response" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#Response">&#182;</a>
+              </div>
+              <h2>Response</h2>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-3" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-3">&#182;</a>
+              </div>
+              <p>You can view a full listing of the response object's properties <a href="http://visionmedia.github.com/superagent/#response-properties">on the superagent documentation page</a></p>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="Request-Options" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#Request-Options">&#182;</a>
+              </div>
+              <h2>Request Options</h2>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="type" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#type">&#182;</a>
+              </div>
+              <h3>type</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-6" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p>Defaults to <code>json</code> but can also be <code>form</code>,<code>xml</code>,<code>png</code>, etc.</p>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-7" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-7">&#182;</a>
+              </div>
+              <p>Specifies the Content-Type</p>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="headers" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#headers">&#182;</a>
+              </div>
+              <h3>headers</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-9" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-9">&#182;</a>
+              </div>
+              <p>An object specifying the HTTP headers to send</p>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="query" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#query">&#182;</a>
+              </div>
+              <h3>query</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-11" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-11">&#182;</a>
+              </div>
+              <p>An object specifying the querystring parameters to send</p>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="username" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#username">&#182;</a>
+              </div>
+              <h3>username</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-13" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-13">&#182;</a>
+              </div>
+              <p>A string specifying the HTTP authentication username</p>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="password" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#password">&#182;</a>
+              </div>
+              <h3>password</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-15" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-15">&#182;</a>
+              </div>
+              <p>A string specifying the HTTP authentication password</p>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="withCredentials" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#withCredentials">&#182;</a>
+              </div>
+              <h3>withCredentials</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-17" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-17">&#182;</a>
+              </div>
+              <p>true or false to send cookies with cross-origin requests. Defaults to false.</p>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+              </tbody>
+    </table>
+
+    
+  </div>
+
+  <div id="sidebar">
+    <div class='header search'>
+      <input type='text' name='search' id='search-box' placeholder='Search...' />
+    </div>
+
+    <div class='header tabs'>
+      <button class='active' data-tab='pages'>Pages</button>
+      <button data-tab='files'>Files</button>
+    </div>
+
+    <div class='scroll-area'>
+      <!-- .multipage here means there will be a sidebar of many pages. -->
+      <div class='list pages multipage'>
+                  
+          <!-- Breadcrumbs -->
+                                  <ul class='breadcrumbs'>
+                              
+                <li class='page back'>
+                                  <a href='../index.html'>Introduction</a>
+                                          </ul>
+          
+          <!-- The page and its headings -->
+          <ul class='current-page'>
+                        
+            <li class='page level-0'>
+              <a href='#'>Syncing</a>
+                              <ul>
+                                                                              <li class='heading level-2'>
+                      <a href="#Response">
+                        Response                      </a>
+                    </li>
+                                                                              <li class='heading level-2'>
+                      <a href="#Request-Options">
+                        Request Options                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#type">
+                        type                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#headers">
+                        headers                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#query">
+                        query                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#username">
+                        username                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#password">
+                        password                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#withCredentials">
+                        withCredentials                      </a>
+                    </li>
+                                  </ul>
+                          </li>
+          </ul>
+
+          <ul class='reference'>
+
+            <!-- The reference page -->
+                          <li class='page has-children level-0'>
+                                  <a href='../index.html'>Introduction</a>
+                              </li>
+            
+            <!-- Subpages of the ref -->
+                                                                                                                      
+                <li class='page  level-1'>
+
+                                                        <a href='../manual/Extending.html' class=''>Extending</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../manual/Syncing.html' class='active'>Syncing</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Channel.html' class=''>Channel</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Collection.html' class=''>Collection</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Layout.html' class=''>Layout</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Model.html' class=''>Model</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Region.html' class=''>Region</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Router.html' class=''>Router</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/View.html' class=''>View</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/rivetsConfig.html' class=''>Binding Formatters</a>
+                  
+                                                    </li>
+                          
+          </ul>
+              </div>
+
+      <div class='list files hidden'>
+        
+        <ul>
+                  <li class='level-1'>
+                                                    <a href='../index.html#f' class='item file '>
+                <i></i>
+                README.md              </a>
+                      </li>
+                                    <li class='level-1'>
+                                                    <button class='item folder '>
+                <i></i>
+                lib              </button>
+              <ul class='hidden'>
+                          <li class='level-2'>
+                                                    <a href='../lib/Channel.html#f' class='item file '>
+                <i></i>
+                Channel.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Collection.html#f' class='item file '>
+                <i></i>
+                Collection.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Layout.html#f' class='item file '>
+                <i></i>
+                Layout.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Model.html#f' class='item file '>
+                <i></i>
+                Model.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Region.html#f' class='item file '>
+                <i></i>
+                Region.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Router.html#f' class='item file '>
+                <i></i>
+                Router.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/View.html#f' class='item file '>
+                <i></i>
+                View.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/delegate.html#f' class='item file '>
+                <i></i>
+                delegate.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/dermis.html#f' class='item file '>
+                <i></i>
+                dermis.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/makeElement.html#f' class='item file '>
+                <i></i>
+                makeElement.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/modelAdapter.html#f' class='item file '>
+                <i></i>
+                modelAdapter.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/rivetsConfig.html#f' class='item file '>
+                <i></i>
+                rivetsConfig.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/syncAdapter.html#f' class='item file '>
+                <i></i>
+                syncAdapter.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/toJSON.html#f' class='item file '>
+                <i></i>
+                toJSON.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/util.html#f' class='item file '>
+                <i></i>
+                util.coffee              </a>
+                      </li>
+                                                        </ul>
+            </li>
+                      </li>
+                                    <li class='level-1'>
+                                                    <button class='item folder expanded'>
+                <i></i>
+                manual              </button>
+              <ul class=''>
+                          <li class='level-2'>
+                                                    <a href='../manual/Extending.html#f' class='item file '>
+                <i></i>
+                Extending.md              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../manual/Syncing.html#f' class='item file active'>
+                <i></i>
+                Syncing.md              </a>
+                      </li>
+                                                        </ul>
+            </li>
+                      </li>
+                                  </ul>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src='../script.js'></script>
+</body>
+</html>

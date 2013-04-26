@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>toJSON.html</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../style.css" />
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.0/jquery-1.8.0.min.js'></script>
+</head>
+<body>
+  <div id="area">
+    <div class='file-header'>
+              <a href="https://github.com/wearefractal/dermis/blob/master/lib/toJSON.coffee">
+          <strong title='lib/toJSON.coffee'>toJSON.coffee</strong>
+          <small>View source</small>
+        </a>
+          </div>
+
+    <table cellpadding="0" cellspacing="0" class="extension-coffee">
+      <thead>
+        <tr>
+          <th class="docs">
+          </th>
+          <th class="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+                                      
+          <tr id="section-0" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-0">&#182;</a>
+              </div>
+                          </td>
+            <td class="code">
+              <div class="highlight"><pre><span class="nv">module.exports = toJSON = </span><span class="nf">(val) -&gt;</span>
+  <span class="k">if</span> <span class="nb">Array</span><span class="p">.</span><span class="nx">isArray</span> <span class="nx">val</span>
+    <span class="k">return</span> <span class="p">(</span><span class="nx">toJSON</span><span class="p">(</span><span class="nx">i</span><span class="p">)</span> <span class="k">for</span> <span class="nx">i</span> <span class="k">in</span> <span class="nx">val</span><span class="p">)</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="nx">val</span><span class="o">?</span> <span class="o">and</span> <span class="k">typeof</span> <span class="nx">val</span><span class="p">.</span><span class="nx">toJSON</span> <span class="o">is</span> <span class="s">&#39;function&#39;</span>
+    <span class="k">return</span> <span class="nx">val</span><span class="p">.</span><span class="nx">toJSON</span><span class="p">()</span>
+  <span class="k">else</span> <span class="k">if</span> <span class="k">typeof</span> <span class="nx">val</span> <span class="o">is</span> <span class="s">&quot;object&quot;</span>
+    <span class="nv">out = </span><span class="p">{}</span>
+    <span class="nx">out</span><span class="p">[</span><span class="nx">k</span><span class="p">]</span> <span class="o">=</span> <span class="nx">toJSON</span> <span class="nx">v</span> <span class="k">for</span> <span class="k">own</span> <span class="nx">k</span><span class="p">,</span><span class="nx">v</span> <span class="k">of</span> <span class="nx">val</span>
+    <span class="k">return</span> <span class="nx">out</span>
+  <span class="k">return</span> <span class="nx">val</span>
+
+</pre></div>            </td>
+          </tr>
+              </tbody>
+    </table>
+
+    
+  </div>
+
+  <div id="sidebar">
+    <div class='header search'>
+      <input type='text' name='search' id='search-box' placeholder='Search...' />
+    </div>
+
+    <div class='header tabs'>
+      <button class='active' data-tab='pages'>Pages</button>
+      <button data-tab='files'>Files</button>
+    </div>
+
+    <div class='scroll-area'>
+      <!-- .multipage here means there will be a sidebar of many pages. -->
+      <div class='list pages multipage'>
+              </div>
+
+      <div class='list files hidden'>
+        
+        <ul>
+                  <li class='level-1'>
+                                                    <a href='../index.html#f' class='item file '>
+                <i></i>
+                README.md              </a>
+                      </li>
+                                    <li class='level-1'>
+                                                    <button class='item folder expanded'>
+                <i></i>
+                lib              </button>
+              <ul class=''>
+                          <li class='level-2'>
+                                                    <a href='../lib/Channel.html#f' class='item file '>
+                <i></i>
+                Channel.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Collection.html#f' class='item file '>
+                <i></i>
+                Collection.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Layout.html#f' class='item file '>
+                <i></i>
+                Layout.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Model.html#f' class='item file '>
+                <i></i>
+                Model.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Region.html#f' class='item file '>
+                <i></i>
+                Region.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Router.html#f' class='item file '>
+                <i></i>
+                Router.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/View.html#f' class='item file '>
+                <i></i>
+                View.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/delegate.html#f' class='item file '>
+                <i></i>
+                delegate.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/dermis.html#f' class='item file '>
+                <i></i>
+                dermis.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/makeElement.html#f' class='item file '>
+                <i></i>
+                makeElement.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/modelAdapter.html#f' class='item file '>
+                <i></i>
+                modelAdapter.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/rivetsConfig.html#f' class='item file '>
+                <i></i>
+                rivetsConfig.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/syncAdapter.html#f' class='item file '>
+                <i></i>
+                syncAdapter.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/toJSON.html#f' class='item file active'>
+                <i></i>
+                toJSON.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/util.html#f' class='item file '>
+                <i></i>
+                util.coffee              </a>
+                      </li>
+                                                        </ul>
+            </li>
+                      </li>
+                                    <li class='level-1'>
+                                                    <button class='item folder '>
+                <i></i>
+                manual              </button>
+              <ul class='hidden'>
+                          <li class='level-2'>
+                                                    <a href='../manual/Extending.html#f' class='item file '>
+                <i></i>
+                Extending.md              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../manual/Syncing.html#f' class='item file '>
+                <i></i>
+                Syncing.md              </a>
+                      </li>
+                                                        </ul>
+            </li>
+                      </li>
+                                  </ul>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src='../script.js'></script>
+</body>
+</html>

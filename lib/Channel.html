@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Channel</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../style.css" />
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.0/jquery-1.8.0.min.js'></script>
+</head>
+<body>
+  <div id="area">
+    <div class='file-header'>
+              <a href="https://github.com/wearefractal/dermis/blob/master/lib/Channel.coffee">
+          <strong title='lib/Channel.coffee'>Channel.coffee</strong>
+          <small>View source</small>
+        </a>
+          </div>
+
+    <table cellpadding="0" cellspacing="0" class="extension-coffee">
+      <thead>
+        <tr>
+          <th class="docs">
+          </th>
+          <th class="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+                                      
+          <tr id="section-0" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-0">&#182;</a>
+              </div>
+                          </td>
+            <td class="code">
+              <div class="highlight"><pre><span class="nv">Emitter = </span><span class="nx">require</span> <span class="s">&#39;emitter&#39;</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="Channel" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#Channel">&#182;</a>
+              </div>
+              <h1>Channel</h1>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-2" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>This is just a simple EventEmitter.</p>
+
+<p>You can use this to pass messages between different components in your application.</p>
+
+<p>There is a main Channel instance exposed as dermis.channel for convenience but you can create your own with <code>new dermis.Channel()</code>.</p>
+
+<p>For details on EventEmitters see <a href="http://nodejs.org/api/events.html#events_class_events_eventemitter">the node.js documentation</a></p>            </td>
+            <td class="code">
+              <div class="highlight"><pre><span class="k">class</span> <span class="nx">Channel</span> <span class="k">extends</span> <span class="nx">Emitter</span>
+
+<span class="nv">module.exports = </span><span class="nx">Channel</span>
+
+</pre></div>            </td>
+          </tr>
+              </tbody>
+    </table>
+
+    
+  </div>
+
+  <div id="sidebar">
+    <div class='header search'>
+      <input type='text' name='search' id='search-box' placeholder='Search...' />
+    </div>
+
+    <div class='header tabs'>
+      <button class='active' data-tab='pages'>Pages</button>
+      <button data-tab='files'>Files</button>
+    </div>
+
+    <div class='scroll-area'>
+      <!-- .multipage here means there will be a sidebar of many pages. -->
+      <div class='list pages multipage'>
+                  
+          <!-- Breadcrumbs -->
+                                  <ul class='breadcrumbs'>
+                              
+                <li class='page back'>
+                                  <a href='../index.html'>Introduction</a>
+                                          </ul>
+          
+          <!-- The page and its headings -->
+          <ul class='current-page'>
+                        
+            <li class='page level-0'>
+              <a href='#'>Channel</a>
+                          </li>
+          </ul>
+
+          <ul class='reference'>
+
+            <!-- The reference page -->
+                          <li class='page has-children level-0'>
+                                  <a href='../index.html'>Introduction</a>
+                              </li>
+            
+            <!-- Subpages of the ref -->
+                                                                                                                      
+                <li class='page  level-1'>
+
+                                                        <a href='../manual/Extending.html' class=''>Extending</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../manual/Syncing.html' class=''>Syncing</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Channel.html' class='active'>Channel</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Collection.html' class=''>Collection</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Layout.html' class=''>Layout</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Model.html' class=''>Model</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Region.html' class=''>Region</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Router.html' class=''>Router</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/View.html' class=''>View</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/rivetsConfig.html' class=''>Binding Formatters</a>
+                  
+                                                    </li>
+                          
+          </ul>
+              </div>
+
+      <div class='list files hidden'>
+        
+        <ul>
+                  <li class='level-1'>
+                                                    <a href='../index.html#f' class='item file '>
+                <i></i>
+                README.md              </a>
+                      </li>
+                                    <li class='level-1'>
+                                                    <button class='item folder expanded'>
+                <i></i>
+                lib              </button>
+              <ul class=''>
+                          <li class='level-2'>
+                                                    <a href='../lib/Channel.html#f' class='item file active'>
+                <i></i>
+                Channel.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Collection.html#f' class='item file '>
+                <i></i>
+                Collection.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Layout.html#f' class='item file '>
+                <i></i>
+                Layout.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Model.html#f' class='item file '>
+                <i></i>
+                Model.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Region.html#f' class='item file '>
+                <i></i>
+                Region.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Router.html#f' class='item file '>
+                <i></i>
+                Router.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/View.html#f' class='item file '>
+                <i></i>
+                View.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/delegate.html#f' class='item file '>
+                <i></i>
+                delegate.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/dermis.html#f' class='item file '>
+                <i></i>
+                dermis.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/makeElement.html#f' class='item file '>
+                <i></i>
+                makeElement.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/modelAdapter.html#f' class='item file '>
+                <i></i>
+                modelAdapter.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/rivetsConfig.html#f' class='item file '>
+                <i></i>
+                rivetsConfig.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/syncAdapter.html#f' class='item file '>
+                <i></i>
+                syncAdapter.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/toJSON.html#f' class='item file '>
+                <i></i>
+                toJSON.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/util.html#f' class='item file '>
+                <i></i>
+                util.coffee              </a>
+                      </li>
+                                                        </ul>
+            </li>
+                      </li>
+                                    <li class='level-1'>
+                                                    <button class='item folder '>
+                <i></i>
+                manual              </button>
+              <ul class='hidden'>
+                          <li class='level-2'>
+                                                    <a href='../manual/Extending.html#f' class='item file '>
+                <i></i>
+                Extending.md              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../manual/Syncing.html#f' class='item file '>
+                <i></i>
+                Syncing.md              </a>
+                      </li>
+                                                        </ul>
+            </li>
+                      </li>
+                                  </ul>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src='../script.js'></script>
+</body>
+</html>

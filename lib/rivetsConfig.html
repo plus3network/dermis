@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Binding Formatters</title>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+  <link rel="stylesheet" media="all" href="../style.css" />
+  <script src='http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.0/jquery-1.8.0.min.js'></script>
+</head>
+<body>
+  <div id="area">
+    <div class='file-header'>
+              <a href="https://github.com/wearefractal/dermis/blob/master/lib/rivetsConfig.coffee">
+          <strong title='lib/rivetsConfig.coffee'>rivetsConfig.coffee</strong>
+          <small>View source</small>
+        </a>
+          </div>
+
+    <table cellpadding="0" cellspacing="0" class="extension-coffee">
+      <thead>
+        <tr>
+          <th class="docs">
+          </th>
+          <th class="code">
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+                                      
+          <tr id="section-0" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-0">&#182;</a>
+              </div>
+                          </td>
+            <td class="code">
+              <div class="highlight"><pre><span class="nv">prevent = </span><span class="nx">require</span> <span class="s">&#39;prevent&#39;</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="Binding-Formatters" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#Binding-Formatters">&#182;</a>
+              </div>
+              <h1>Binding Formatters</h1>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-2" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-2">&#182;</a>
+              </div>
+              <p>dermis provides some default data binding formatters to help you get going as quickly as possible</p>
+
+<p>The functions below can be used as standard rivets formatters and can be used in combination with one another to do crazy things.</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre><span class="nv">cfg =</span>
+  <span class="nv">preloadData: </span><span class="kc">true</span>
+  <span class="nv">formatters:</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="exists" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#exists">&#182;</a>
+              </div>
+              <h3>exists</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-4" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-4">&#182;</a>
+              </div>
+              <p><code>data-show="user.name | exists"</code></p>
+
+<p>Returns true or false if the value exists</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">exists: </span><span class="nf">(v) -&gt;</span> <span class="nx">v</span><span class="o">?</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="empty" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#empty">&#182;</a>
+              </div>
+              <h3>empty</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-6" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-6">&#182;</a>
+              </div>
+              <p><code>data-hide="user.friends | empty"</code></p>
+
+<p>Returns true if the value is non-existent or has a length of zero.</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">empty: </span><span class="nf">(v) -&gt;</span> <span class="o">!</span><span class="p">(</span><span class="nx">v</span><span class="o">?</span> <span class="o">and</span> <span class="nx">v</span><span class="o">?</span><span class="p">.</span><span class="nx">length</span> <span class="o">isnt</span> <span class="mi">0</span><span class="p">)</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="date" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#date">&#182;</a>
+              </div>
+              <h3>date</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-8" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-8">&#182;</a>
+              </div>
+              <p><code>data-text="user.birthday | date"</code></p>
+
+<p>You must include <a href="http://momentjs.com/">moment.js</a> on your page to use this. It is not bundled.</p>
+
+<p>Returns the value date formatted by moment.js</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">date: </span><span class="nf">(v) -&gt;</span> <span class="nx">moment</span><span class="p">(</span><span class="nx">v</span><span class="p">).</span><span class="nx">format</span> <span class="s">&#39;MMM DD, YYYY&#39;</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="money" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#money">&#182;</a>
+              </div>
+              <h3>money</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-10" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-10">&#182;</a>
+              </div>
+              <p><code>data-text="user.accountBalance | money"</code></p>
+
+<p>You must include <a href="http://josscrowcroft.github.com/accounting.js/">accounting.js</a> on your page to use this. It is not bundled.</p>
+
+<p>Returns the value currency formatted by accounting.js</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">money: </span><span class="nf">(v) -&gt;</span> <span class="nx">accounting</span><span class="p">.</span><span class="nx">formatMoney</span> <span class="nx">v</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="toNumber" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#toNumber">&#182;</a>
+              </div>
+              <h3>toNumber</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-12" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-12">&#182;</a>
+              </div>
+              <p><code>data-value="user.sweetText | toNumber"</code></p>
+
+<p>Returns the value converted to a number</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">toNumber: </span><span class="nf">(v) -&gt;</span> <span class="o">+</span><span class="nx">v</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="toString" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#toString">&#182;</a>
+              </div>
+              <h3>toString</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-14" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-14">&#182;</a>
+              </div>
+              <p><code>data-value="user.sweetNumber | toString"</code></p>
+
+<p>Returns the value converted to a string</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">toString: </span><span class="nf">(v) -&gt;</span> <span class="nb">String</span> <span class="nx">v</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="negate" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#negate">&#182;</a>
+              </div>
+              <h3>negate</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-16" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-16">&#182;</a>
+              </div>
+              <p><code>data-show="user.badBoy | exists | negate"</code></p>
+
+<p>Returns the boolean opposite of the value (true=false, false=true)</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">negate: </span><span class="nf">(v) -&gt;</span> <span class="o">!</span><span class="nx">v</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="is" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#is">&#182;</a>
+              </div>
+              <h3>is</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-18" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-18">&#182;</a>
+              </div>
+              <p><code>data-show="user.name | is John"</code></p>
+
+<p>Returns true if the value equals the argument</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="o">is:</span> <span class="nf">(v,a) -&gt;</span> <span class="nx">v</span> <span class="o">is</span> <span class="nx">a</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="isnt" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#isnt">&#182;</a>
+              </div>
+              <h3>isnt</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-20" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-20">&#182;</a>
+              </div>
+              <p><code>data-hide="user.name | isnt John"</code></p>
+
+<p>Returns true if the value doesn't equal the argument</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="o">isnt:</span> <span class="nf">(v,a) -&gt;</span> <span class="nx">v</span> <span class="o">isnt</span> <span class="nx">a</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="gt" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#gt">&#182;</a>
+              </div>
+              <h3>gt</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-22" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-22">&#182;</a>
+              </div>
+              <p><code>data-show="user.friends | length | gt 5"</code></p>
+
+<p>Returns true if the value is greater than the argument</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">gt: </span><span class="nf">(v,a) -&gt;</span> <span class="nx">v</span> <span class="o">&gt;</span> <span class="nx">a</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="lt" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#lt">&#182;</a>
+              </div>
+              <h3>lt</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-24" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-24">&#182;</a>
+              </div>
+              <p><code>data-hide="user.friends | length | lt 5"</code></p>
+
+<p>Returns true if the value is less than the argument</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">lt: </span><span class="nf">(v,a) -&gt;</span> <span class="nx">v</span> <span class="o">&lt;</span> <span class="nx">a</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="at" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#at">&#182;</a>
+              </div>
+              <h3>at</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-26" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-26">&#182;</a>
+              </div>
+              <p><code>data-text="user.friends | at 0"</code></p>
+
+<p>Returns the item at the index specified for values</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">at: </span><span class="nf">(v, a) -&gt;</span>
+      <span class="k">return</span> <span class="nx">v</span> <span class="k">unless</span> <span class="nx">v</span><span class="o">?</span>
+      <span class="k">return</span> <span class="nx">v</span><span class="p">[</span><span class="nb">parseInt</span><span class="p">(</span><span class="nx">a</span><span class="p">)]</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="join" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#join">&#182;</a>
+              </div>
+              <h3>join</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-28" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-28">&#182;</a>
+              </div>
+              <p><code>data-text="user.friends | join ,"</code></p>
+
+<p>Returns the output of value joined by the argument</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">join: </span><span class="nf">(v, a) -&gt;</span>
+      <span class="k">return</span> <span class="nx">v</span> <span class="k">unless</span> <span class="nx">v</span><span class="o">?</span>
+      <span class="k">return</span> <span class="nx">v</span><span class="p">.</span><span class="nx">join</span> <span class="nx">a</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="split" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#split">&#182;</a>
+              </div>
+              <h3>split</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-30" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-30">&#182;</a>
+              </div>
+              <p><code>data-each-friend="user.friendList | split ,"</code></p>
+
+<p>Returns an array of value split by the argument</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">split: </span><span class="nf">(v, a) -&gt;</span>
+      <span class="k">return</span> <span class="nx">v</span> <span class="k">unless</span> <span class="nx">v</span><span class="o">?</span>
+      <span class="k">return</span> <span class="nx">v</span><span class="p">.</span><span class="nx">split</span> <span class="nx">a</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="prepend" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#prepend">&#182;</a>
+              </div>
+              <h3>prepend</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-32" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-32">&#182;</a>
+              </div>
+              <p><code>data-href="user.name | prepend /users/"</code></p>
+
+<p>Returns a string of argument + value</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">prepend: </span><span class="nf">(v,a...) -&gt;</span> <span class="nx">a</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span><span class="o">+</span><span class="nx">v</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="append" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#append">&#182;</a>
+              </div>
+              <h3>append</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-34" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-34">&#182;</a>
+              </div>
+              <p><code>data-href="user.name | prepend /users/ | append /messages"</code></p>
+
+<p>Returns a string of value + argument</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">append: </span><span class="nf">(v,a...) -&gt;</span> <span class="nx">v</span><span class="o">+</span><span class="nx">a</span><span class="p">.</span><span class="nx">join</span><span class="p">(</span><span class="s">&#39; &#39;</span><span class="p">)</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="length" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#length">&#182;</a>
+              </div>
+              <h3>length</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-36" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-36">&#182;</a>
+              </div>
+              <p><code>data-text="user.friends | length"</code></p>
+
+<p>Returns the length of the value</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">length: </span><span class="nf">(v) -&gt;</span>
+      <span class="k">return</span> <span class="nx">v</span> <span class="k">unless</span> <span class="nx">v</span><span class="o">?</span>
+      <span class="k">return</span> <span class="nx">v</span><span class="p">.</span><span class="nx">length</span></pre></div>            </td>
+          </tr>
+                                      
+          <tr id="cancelEvent" class="heading">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#cancelEvent">&#182;</a>
+              </div>
+              <h3>cancelEvent</h3>            </td>
+            <td class="code">
+                          </td>
+          </tr>
+                                      
+          <tr id="section-38" class="">
+            <td class="docs">
+              <div class="pilwrap">
+                <a class="pilcrow" href="#section-38">&#182;</a>
+              </div>
+              <p><code>data-on-submit="user:save | cancelEvent"</code></p>
+
+<p>Extremely useful for preventing forms from submitting but can be used to stop all event propagation.</p>
+
+<p>Returns a new function wrapping value that stops event propagation.</p>            </td>
+            <td class="code">
+              <div class="highlight"><pre>    <span class="nv">cancelEvent: </span><span class="nf">(v) -&gt;</span>
+      <span class="k">return</span> <span class="nx">v</span> <span class="k">unless</span> <span class="nx">v</span><span class="o">?</span>
+      <span class="k">return</span> <span class="nf">(e) -&gt;</span>
+        <span class="nx">prevent</span> <span class="nx">e</span>
+        <span class="nx">v</span><span class="p">.</span><span class="nx">call</span> <span class="nx">@</span><span class="p">,</span> <span class="nx">e</span>
+        <span class="k">return</span> <span class="kc">false</span>
+
+  <span class="nv">adapter:</span>
+    <span class="nv">subscribe: </span><span class="nf">(obj, kp, cb) -&gt;</span>
+      <span class="nx">obj</span><span class="p">.</span><span class="nx">on</span> <span class="s">&quot;change:</span><span class="si">#{</span><span class="nx">kp</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nx">cb</span>
+      <span class="k">return</span>
+
+    <span class="nv">unsubscribe: </span><span class="nf">(obj, kp, cb) -&gt;</span>
+      <span class="nx">obj</span><span class="p">.</span><span class="nx">removeListener</span> <span class="s">&quot;change:</span><span class="si">#{</span><span class="nx">kp</span><span class="si">}</span><span class="s">&quot;</span><span class="p">,</span> <span class="nx">cb</span>
+      <span class="k">return</span>
+
+    <span class="nv">read: </span><span class="nf">(obj, kp) -&gt;</span> <span class="nx">obj</span><span class="p">.</span><span class="nx">get</span> <span class="nx">kp</span>
+
+    <span class="nv">publish: </span><span class="nf">(obj, kp, val) -&gt;</span>
+      <span class="nx">obj</span><span class="p">.</span><span class="nx">set</span> <span class="nx">kp</span><span class="p">,</span> <span class="nx">val</span>
+      <span class="k">return</span>
+
+<span class="nv">publishers = </span><span class="p">[</span><span class="s">&quot;toNumber&quot;</span><span class="p">,</span> <span class="s">&quot;toString&quot;</span><span class="p">]</span>
+<span class="k">for</span> <span class="nx">k</span><span class="p">,</span><span class="nx">v</span> <span class="k">of</span> <span class="nx">cfg</span><span class="p">.</span><span class="nx">formatters</span> <span class="k">when</span> <span class="nx">publishers</span><span class="p">.</span><span class="nx">indexOf</span><span class="p">(</span><span class="nx">k</span><span class="p">)</span> <span class="o">isnt</span> <span class="o">-</span><span class="mi">1</span>
+  <span class="nv">v.publish = v.read = </span><span class="nx">v</span>
+
+<span class="nv">module.exports = </span><span class="nx">cfg</span>
+
+</pre></div>            </td>
+          </tr>
+              </tbody>
+    </table>
+
+    
+  </div>
+
+  <div id="sidebar">
+    <div class='header search'>
+      <input type='text' name='search' id='search-box' placeholder='Search...' />
+    </div>
+
+    <div class='header tabs'>
+      <button class='active' data-tab='pages'>Pages</button>
+      <button data-tab='files'>Files</button>
+    </div>
+
+    <div class='scroll-area'>
+      <!-- .multipage here means there will be a sidebar of many pages. -->
+      <div class='list pages multipage'>
+                  
+          <!-- Breadcrumbs -->
+                                  <ul class='breadcrumbs'>
+                              
+                <li class='page back'>
+                                  <a href='../index.html'>Introduction</a>
+                                          </ul>
+          
+          <!-- The page and its headings -->
+          <ul class='current-page'>
+                        
+            <li class='page level-0'>
+              <a href='#'>Binding Formatters</a>
+                              <ul>
+                                                                              <li class='heading level-3'>
+                      <a href="#exists">
+                        exists                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#empty">
+                        empty                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#date">
+                        date                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#money">
+                        money                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#toNumber">
+                        toNumber                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#toString">
+                        toString                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#negate">
+                        negate                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#is">
+                        is                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#isnt">
+                        isnt                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#gt">
+                        gt                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#lt">
+                        lt                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#at">
+                        at                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#join">
+                        join                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#split">
+                        split                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#prepend">
+                        prepend                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#append">
+                        append                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#length">
+                        length                      </a>
+                    </li>
+                                                                              <li class='heading level-3'>
+                      <a href="#cancelEvent">
+                        cancelEvent                      </a>
+                    </li>
+                                  </ul>
+                          </li>
+          </ul>
+
+          <ul class='reference'>
+
+            <!-- The reference page -->
+                          <li class='page has-children level-0'>
+                                  <a href='../index.html'>Introduction</a>
+                              </li>
+            
+            <!-- Subpages of the ref -->
+                                                                                                                      
+                <li class='page  level-1'>
+
+                                                        <a href='../manual/Extending.html' class=''>Extending</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../manual/Syncing.html' class=''>Syncing</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Channel.html' class=''>Channel</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Collection.html' class=''>Collection</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Layout.html' class=''>Layout</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Model.html' class=''>Model</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Region.html' class=''>Region</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/Router.html' class=''>Router</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/View.html' class=''>View</a>
+                  
+                                                    </li>
+                                                                                              
+                <li class='page  level-1'>
+
+                                                        <a href='../lib/rivetsConfig.html' class='active'>Binding Formatters</a>
+                  
+                                                    </li>
+                          
+          </ul>
+              </div>
+
+      <div class='list files hidden'>
+        
+        <ul>
+                  <li class='level-1'>
+                                                    <a href='../index.html#f' class='item file '>
+                <i></i>
+                README.md              </a>
+                      </li>
+                                    <li class='level-1'>
+                                                    <button class='item folder expanded'>
+                <i></i>
+                lib              </button>
+              <ul class=''>
+                          <li class='level-2'>
+                                                    <a href='../lib/Channel.html#f' class='item file '>
+                <i></i>
+                Channel.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Collection.html#f' class='item file '>
+                <i></i>
+                Collection.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Layout.html#f' class='item file '>
+                <i></i>
+                Layout.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Model.html#f' class='item file '>
+                <i></i>
+                Model.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Region.html#f' class='item file '>
+                <i></i>
+                Region.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/Router.html#f' class='item file '>
+                <i></i>
+                Router.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/View.html#f' class='item file '>
+                <i></i>
+                View.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/delegate.html#f' class='item file '>
+                <i></i>
+                delegate.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/dermis.html#f' class='item file '>
+                <i></i>
+                dermis.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/makeElement.html#f' class='item file '>
+                <i></i>
+                makeElement.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/modelAdapter.html#f' class='item file '>
+                <i></i>
+                modelAdapter.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/rivetsConfig.html#f' class='item file active'>
+                <i></i>
+                rivetsConfig.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/syncAdapter.html#f' class='item file '>
+                <i></i>
+                syncAdapter.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/toJSON.html#f' class='item file '>
+                <i></i>
+                toJSON.coffee              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../lib/util.html#f' class='item file '>
+                <i></i>
+                util.coffee              </a>
+                      </li>
+                                                        </ul>
+            </li>
+                      </li>
+                                    <li class='level-1'>
+                                                    <button class='item folder '>
+                <i></i>
+                manual              </button>
+              <ul class='hidden'>
+                          <li class='level-2'>
+                                                    <a href='../manual/Extending.html#f' class='item file '>
+                <i></i>
+                Extending.md              </a>
+                      </li>
+                                                    <li class='level-2'>
+                                                    <a href='../manual/Syncing.html#f' class='item file '>
+                <i></i>
+                Syncing.md              </a>
+                      </li>
+                                                        </ul>
+            </li>
+                      </li>
+                                  </ul>
+
+      </div>
+    </div>
+
+  </div>
+
+  <script src='../script.js'></script>
+</body>
+</html>
