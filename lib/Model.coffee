@@ -151,7 +151,7 @@ class Model extends Emitter
   #
   # Will emit saving, saved, and saveError events.
   #
-  # Will use either model.url or model.urls.update for PUT request
+  # Will use either model.url or model.urls.update for PATCH request
   #
   # Returns model for chaining purposes
 
@@ -160,7 +160,7 @@ class Model extends Emitter
       cb = opt
       opt = {}
     @emit "saving", opt
-    @sync 'update', @, opt, (err, res) =>
+    @sync 'patch', @, opt, (err, res) =>
       if err?
         @emit "saveError", err
         cb err if cb
