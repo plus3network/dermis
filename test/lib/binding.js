@@ -308,6 +308,144 @@ describe("actual binding", function() {
     el.children().eq(2).find(".score").html().should.equal("10");
     return done();
   });
+  it('should be able to bind with collection and nesting', function(done) {
+    var Person, TestView, el, fakeList, john, tim, tom, vu, _ref, _ref1;
+
+    fakeList = new dermis.Collection;
+    Person = (function(_super) {
+      __extends(Person, _super);
+
+      function Person() {
+        _ref = Person.__super__.constructor.apply(this, arguments);
+        return _ref;
+      }
+
+      Person.prototype.casts = {
+        name: dermis.Model
+      };
+
+      return Person;
+
+    })(dermis.Model);
+    john = new Person({
+      name: {
+        first: "John"
+      },
+      score: 100
+    });
+    tom = new dermis.Model({
+      name: {
+        first: "Tom"
+      },
+      score: 50
+    });
+    tim = new dermis.Model({
+      name: {
+        first: "Tim"
+      },
+      score: 10
+    });
+    fakeList.add(john);
+    fakeList.add(tom);
+    TestView = (function(_super) {
+      __extends(TestView, _super);
+
+      function TestView() {
+        _ref1 = TestView.__super__.constructor.apply(this, arguments);
+        return _ref1;
+      }
+
+      TestView.prototype.tagName = "ul";
+
+      TestView.prototype.content = "<li data-each-user='.models'>\n<p class='username' data-text='user.name.first'></p>\n<p class='score' data-text='user.score'></p>\n</li>";
+
+      return TestView;
+
+    })(dermis.View);
+    vu = new TestView;
+    el = $(vu.render().el);
+    vu.bind(fakeList);
+    el.children().length.should.equal(2);
+    el.children().eq(0).find(".username").html().should.equal("John");
+    el.children().eq(0).find(".score").html().should.equal("100");
+    el.children().eq(1).find(".username").html().should.equal("Tom");
+    el.children().eq(1).find(".score").html().should.equal("50");
+    fakeList.at(0).set('score', 200);
+    el.children().eq(0).find(".score").html().should.equal("200");
+    fakeList.add(tim);
+    el.children().eq(2).find(".username").html().should.equal("Tim");
+    el.children().eq(2).find(".score").html().should.equal("10");
+    return done();
+  });
+  it('should be able to bind with collection and nesting 2', function(done) {
+    var Person, TestView, el, fakeList, john, tim, tom, vu, _ref, _ref1;
+
+    fakeList = new dermis.Collection;
+    Person = (function(_super) {
+      __extends(Person, _super);
+
+      function Person() {
+        _ref = Person.__super__.constructor.apply(this, arguments);
+        return _ref;
+      }
+
+      Person.prototype.casts = {
+        name: dermis.Model
+      };
+
+      return Person;
+
+    })(dermis.Model);
+    john = new Person({
+      name: {
+        first: "John"
+      },
+      score: 100
+    });
+    tom = new dermis.Model({
+      name: {
+        first: "Tom"
+      },
+      score: 50
+    });
+    tim = new dermis.Model({
+      name: {
+        first: "Tim"
+      },
+      score: 10
+    });
+    fakeList.add(john);
+    fakeList.add(tom);
+    TestView = (function(_super) {
+      __extends(TestView, _super);
+
+      function TestView() {
+        _ref1 = TestView.__super__.constructor.apply(this, arguments);
+        return _ref1;
+      }
+
+      TestView.prototype.tagName = "ul";
+
+      TestView.prototype.content = "<li data-each-user='.models'>\n<p class='username' data-text='user.name.first.0'></p>\n<p class='score' data-text='user.score'></p>\n</li>";
+
+      return TestView;
+
+    })(dermis.View);
+    vu = new TestView;
+    el = $(vu.render().el);
+    vu.bind(fakeList);
+    el.children().length.should.equal(2);
+    el.children().eq(0).find(".username").html().should.equal("J");
+    el.children().eq(0).find(".score").html().should.equal("100");
+    el.children().eq(1).find(".username").html().should.equal("T");
+    el.children().eq(1).find(".score").html().should.equal("50");
+    fakeList.at(0).set('score', 200);
+    el.children().eq(0).find(".score").html().should.equal("200");
+    fakeList.add(tim);
+    el.children().eq(2).find(".username").html().should.equal("T");
+    el.children().eq(2).find(".score").html().should.equal("10");
+    return done();
+  });
   it('should be able to bind with collection and formatter', function(done) {
     var TestView, el, fakeList, john, tim, tom, vu, _ref;
 

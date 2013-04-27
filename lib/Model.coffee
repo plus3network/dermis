@@ -1,6 +1,9 @@
 rivets = require 'rivets'
 syncAdapter = require './syncAdapter'
 Emitter = require 'emitter'
+mpath = require 'mpath'
+adapter = require './modelAdapter'
+toJSON = require './toJSON'
 
 # # Model
 # Models are like standard objects but with a punch.
@@ -11,8 +14,10 @@ Emitter = require 'emitter'
 #
 # To extend or create a custom model see the [Extending documentation](../manual/Extending.html)
 
-
 class Model extends Emitter
+  @_isModel: true
+  _isModel: true
+
   # ### sync
   # Override this to change the sync adapter for the model.
   #
@@ -21,7 +26,7 @@ class Model extends Emitter
   sync: syncAdapter
 
   # ### casts
-  # An object of things to cast on .set()
+  # An object of things to cast on .set(). Works with collections, models, and functions.
   #
   # Example:
   #
@@ -29,10 +34,26 @@ class Model extends Emitter
   
   casts: null
 
+  # ### accessors
+  # An object of getters/setters
+  #
+  # Format: ```key :{get: function, set: function(val)}```
+  
+  accessors: null
+
   # ### defaults
   # Default values to be .set() after .construct()
 
   defaults: null
+
+  # ### format
+  # Function that formats data on fetch
+  #
+  # Format: ```function(val)```
+  
+  format: null
+
+  _fetched: false
 
   # ### constructor(properties)
   # Creates a new Model
@@ -40,17 +61,21 @@ class Model extends Emitter
   # properties object is optional but if given it will .set() them
 
   constructor: (o) ->
-    @_fetched = false
     @_props = {}
+
     @casts ?= {}
+    @accessors ?= {}
 
     @set @defaults if @defaults?
-    @set o
+    o = @format o if @format?
+    @set o unless Array.isArray o # prevent us from messing up collections
 
   # ### get(key)
   # Returns the value for given key
 
-  get: (k) -> @_props[k]
+  get: (k) ->
+    return @accessors[k].get() if @accessors[k]?.get
+    return mpath.get k, @_props, adapter.get
 
   # ### set(key, val, silent=false)
   # Sets the value of key to val
@@ -69,9 +94,16 @@ class Model extends Emitter
       # cast val
       castModel = @casts[k]
       if castModel?
-        v = new castModel v
+        if castModel._isModel
+          v = new castModel v
+        else
+          v = castModel v
 
-      @_props[k] = v
+      if @accessors[k]?.set
+        @accessors[k].set v
+      else
+        mpath.set k, v, @_props, adapter.set silent
+
       unless silent
         @emit "change", k, v
         @emit "change:#{k}", v
@@ -85,13 +117,13 @@ class Model extends Emitter
   # Returns the model for chaining purposes
 
   clear: (silent) ->
-    @remove k, silent for k,v of @_props
+    @remove k, silent for own k,v of @_props
     return @
 
   # ### has(key)
   # Returns true or false if the model has a property with the given name
 
-  has: (k) -> @_props[k]?
+  has: (k) -> @get(k)?
 
   # ### remove(key, silent=false)
   # Removes property with given name from the model
@@ -100,8 +132,8 @@ class Model extends Emitter
   #
   # Returns the model for chaining purposes
 
-  remove: (k, silent) -> 
-    delete @_props[k]
+  remove: (k, silent) ->
+    @set k, null, true
     unless silent
       @emit "change", k
       @emit "change:#{k}"
@@ -113,7 +145,7 @@ class Model extends Emitter
   # ### toJSON()
   # Returns a standard object with all model properties
 
-  toJSON: -> @_props
+  toJSON: -> toJSON @_props
 
   # ### fetch(options, callback)
   # See [Syncing documentation](../manual/Syncing.html) for possible options.
@@ -138,9 +170,11 @@ class Model extends Emitter
         @emit "fetchError", err
         cb err if cb
         return
+
+      res.body = @format res.body if @format?
       @set res.body if typeof res.body is 'object'
-      @emit "fetched", res
       @_fetched = true
+      @emit "fetched", res
       cb err, res if cb
     return @
 

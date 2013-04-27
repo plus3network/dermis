@@ -6,334 +6,660 @@ var should,
 should = chai.should();
 
 describe("model", function() {
-  it("should be able to specify defaults", function(done) {
-    var Pet, TestModel, mod, _ref, _ref1;
+  describe("defaults", function() {
+    it("should be able to specify defaults", function(done) {
+      var Pet, TestModel, mod, _ref, _ref1;
 
-    Pet = (function(_super) {
-      __extends(Pet, _super);
+      Pet = (function(_super) {
+        __extends(Pet, _super);
 
-      function Pet() {
-        _ref = Pet.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
-
-      return Pet;
-
-    })(dermis.Model);
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
-
-      function TestModel() {
-        _ref1 = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref1;
-      }
-
-      TestModel.prototype.defaults = {
-        dog: {
-          name: "Fido"
-        },
-        name: "Test"
-      };
-
-      return TestModel;
-
-    })(dermis.Model);
-    mod = new TestModel;
-    mod.get('dog').name.should.equal("Fido");
-    mod.get('name').should.equal("Test");
-    return done();
-  });
-  it("should be able to specify defaults then override via constructor", function(done) {
-    var Pet, TestModel, mod, _ref, _ref1;
-
-    Pet = (function(_super) {
-      __extends(Pet, _super);
-
-      function Pet() {
-        _ref = Pet.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
-
-      return Pet;
-
-    })(dermis.Model);
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
-
-      function TestModel() {
-        _ref1 = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref1;
-      }
-
-      TestModel.prototype.defaults = {
-        dog: {
-          name: "Fido"
-        },
-        name: "Test"
-      };
-
-      return TestModel;
-
-    })(dermis.Model);
-    mod = new TestModel({
-      name: "Tom"
-    });
-    mod.get('dog').name.should.equal("Fido");
-    mod.get('name').should.equal("Tom");
-    return done();
-  });
-  it("should be able to set", function(done) {
-    var TestModel, mod, _ref;
-
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
-
-      function TestModel() {
-        _ref = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
-
-      return TestModel;
-
-    })(dermis.Model);
-    mod = new TestModel;
-    mod.on("change:wut", function(v) {
-      v.should.equal(2);
-      return done();
-    });
-    return mod.set("wut", 2);
-  });
-  it("should be able to set silently", function(done) {
-    var TestModel, mod, _ref;
-
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
-
-      function TestModel() {
-        _ref = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
-
-      return TestModel;
-
-    })(dermis.Model);
-    mod = new TestModel;
-    mod.on("change:wut", function(v) {
-      throw new Error("Change event called");
-    });
-    mod.set("wut", 2, true);
-    return done();
-  });
-  it("should be able to set via constructor", function(done) {
-    var TestModel, mod, _ref;
-
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
-
-      function TestModel() {
-        _ref = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
-
-      return TestModel;
-
-    })(dermis.Model);
-    mod = new TestModel({
-      wut: 2
-    });
-    mod.get("wut").should.equal(2);
-    return done();
-  });
-  it("should be able to set by object", function(done) {
-    var TestModel, mod, _ref;
-
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
-
-      function TestModel() {
-        _ref = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
-
-      return TestModel;
-
-    })(dermis.Model);
-    mod = new TestModel;
-    mod.on("change:wut", function(v) {
-      v.should.equal(2);
-      return done();
-    });
-    return mod.set({
-      wut: 2
-    });
-  });
-  it("should be able to set by object silently", function(done) {
-    var TestModel, mod, _ref;
-
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
-
-      function TestModel() {
-        _ref = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
-
-      return TestModel;
-
-    })(dermis.Model);
-    mod = new TestModel;
-    mod.on("change:wut", function(v) {
-      throw new Error("Change event called");
-    });
-    mod.set({
-      wut: 2
-    }, true);
-    return done();
-  });
-  it("should be able to set with casting", function(done) {
-    var Pet, TestModel, mod, _ref, _ref1;
-
-    Pet = (function(_super) {
-      __extends(Pet, _super);
-
-      function Pet() {
-        _ref = Pet.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
-
-      return Pet;
-
-    })(dermis.Model);
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
-
-      function TestModel() {
-        _ref1 = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref1;
-      }
-
-      TestModel.prototype.casts = {
-        dog: Pet
-      };
-
-      return TestModel;
-
-    })(dermis.Model);
-    mod = new TestModel;
-    mod.on("change:dog", function(v) {
-      (v instanceof Pet).should.equal(true);
-      v.get('name').should.equal("Fido");
-      return done();
-    });
-    return mod.set("dog", {
-      name: "Fido"
-    });
-  });
-  it("should be able to set with defaults and casting", function(done) {
-    var Pet, TestModel, mod, _ref, _ref1;
-
-    Pet = (function(_super) {
-      __extends(Pet, _super);
-
-      function Pet() {
-        _ref = Pet.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
-
-      return Pet;
-
-    })(dermis.Model);
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
-
-      function TestModel() {
-        _ref1 = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref1;
-      }
-
-      TestModel.prototype.casts = {
-        dog: Pet
-      };
-
-      TestModel.prototype.defaults = {
-        dog: {
-          name: "Fido"
+        function Pet() {
+          _ref = Pet.__super__.constructor.apply(this, arguments);
+          return _ref;
         }
-      };
 
-      return TestModel;
+        return Pet;
 
-    })(dermis.Model);
-    mod = new TestModel;
-    should.exist(mod.get('dog'));
-    (mod.get('dog') instanceof Pet).should.equal(true);
-    mod.get('dog').get('name').should.equal("Fido");
-    return done();
+      })(dermis.Model);
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref1 = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref1;
+        }
+
+        TestModel.prototype.defaults = {
+          dog: {
+            name: "Fido"
+          },
+          name: "Test"
+        };
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel;
+      mod.get('dog').name.should.equal("Fido");
+      mod.get('name').should.equal("Test");
+      return done();
+    });
+    return it("should be able to specify defaults then override via constructor", function(done) {
+      var Pet, TestModel, mod, _ref, _ref1;
+
+      Pet = (function(_super) {
+        __extends(Pet, _super);
+
+        function Pet() {
+          _ref = Pet.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return Pet;
+
+      })(dermis.Model);
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref1 = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref1;
+        }
+
+        TestModel.prototype.defaults = {
+          dog: {
+            name: "Fido"
+          },
+          name: "Test"
+        };
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel({
+        name: "Tom"
+      });
+      mod.get('dog').name.should.equal("Fido");
+      mod.get('name').should.equal("Tom");
+      return done();
+    });
   });
-  it("should be able to list props via toJSON", function(done) {
-    var TestModel, mod, _ref;
+  describe("setting", function() {
+    it("should be able to set", function(done) {
+      var TestModel, mod, _ref;
 
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
 
-      function TestModel() {
-        _ref = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
 
-      return TestModel;
+        return TestModel;
 
-    })(dermis.Model);
-    mod = new TestModel({
-      wut: 2
+      })(dermis.Model);
+      mod = new TestModel;
+      mod.on("change:wut", function(v) {
+        v.should.equal(2);
+        return done();
+      });
+      return mod.set("wut", 2);
     });
-    mod.toJSON().should.eql({
-      wut: 2
+    it("should be able to set using nested paths", function(done) {
+      var TestModel, mod, _ref;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel({
+        wut: new TestModel({
+          wut: new TestModel({
+            name: "Tobias"
+          })
+        })
+      });
+      mod.set("wut.wut.name", "Gobias");
+      mod.toJSON().wut.wut.name.should.equal("Gobias");
+      mod.get("wut.wut.name").should.equal("Gobias");
+      return done();
     });
-    return done();
+    it("should be able to set using nested paths with arrays", function(done) {
+      var TestModel, mod, _ref;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel({
+        friends: [
+          new TestModel({
+            name: "Tobias"
+          }), new TestModel({
+            name: "Tobias"
+          })
+        ]
+      });
+      mod.set("friends.0.name", "Gobias");
+      mod.toJSON().friends[0].name.should.equal("Gobias");
+      mod.get("friends.0.name").should.equal("Gobias");
+      return done();
+    });
+    it("should be able to set using nested paths with collections", function(done) {
+      var Friends, TestModel, mod, _ref, _ref1;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      Friends = (function(_super) {
+        __extends(Friends, _super);
+
+        function Friends() {
+          _ref1 = Friends.__super__.constructor.apply(this, arguments);
+          return _ref1;
+        }
+
+        Friends.prototype.model = TestModel;
+
+        return Friends;
+
+      })(dermis.Collection);
+      mod = new TestModel({
+        friends: new Friends([
+          {
+            name: "Tobias",
+            name: "Tobias"
+          }
+        ])
+      });
+      mod.set("friends.0.name", "Gobias");
+      mod.toJSON().friends.models[0].name.should.equal("Gobias");
+      mod.get("friends.0.name").should.equal("Gobias");
+      return done();
+    });
+    it("should be able to replace using nested paths with collections", function(done) {
+      var Friends, TestModel, mod, _ref, _ref1;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      Friends = (function(_super) {
+        __extends(Friends, _super);
+
+        function Friends() {
+          _ref1 = Friends.__super__.constructor.apply(this, arguments);
+          return _ref1;
+        }
+
+        Friends.prototype.model = TestModel;
+
+        return Friends;
+
+      })(dermis.Collection);
+      mod = new TestModel({
+        friends: new Friends([
+          {
+            name: "Tobias",
+            name: "Tobias"
+          }
+        ])
+      });
+      mod.set("friends.0", {
+        name: "Gobias2"
+      });
+      mod.toJSON().friends.models[0].name.should.equal("Gobias2");
+      mod.get('friends').at(0).get('name').should.equal("Gobias2");
+      mod.get("friends.0.name").should.equal("Gobias2");
+      return done();
+    });
+    it("should be able to set silently", function(done) {
+      var TestModel, mod, _ref;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel;
+      mod.on("change:wut", function(v) {
+        throw new Error("Change event called");
+      });
+      mod.set("wut", 2, true);
+      return done();
+    });
+    it("should be able to set via constructor", function(done) {
+      var TestModel, mod, _ref;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel({
+        wut: 2
+      });
+      mod.get("wut").should.equal(2);
+      return done();
+    });
+    it("should be able to set by object", function(done) {
+      var TestModel, mod, _ref;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel;
+      mod.on("change:wut", function(v) {
+        v.should.equal(2);
+        return done();
+      });
+      return mod.set({
+        wut: 2
+      });
+    });
+    it("should be able to set by object silently", function(done) {
+      var TestModel, mod, _ref;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel;
+      mod.on("change:wut", function(v) {
+        throw new Error("Change event called");
+      });
+      mod.set({
+        wut: 2
+      }, true);
+      return done();
+    });
+    return it("should be able to set then has", function(done) {
+      var TestModel, mod, _ref;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel({
+        wut: 2
+      });
+      mod.has("wut").should.equal(true);
+      return done();
+    });
   });
-  it("should be able to set then has", function(done) {
-    var TestModel, mod, _ref;
+  describe("casting", function() {
+    it("should be able to set with casting (models)", function(done) {
+      var Pet, TestModel, mod, _ref, _ref1;
 
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
+      Pet = (function(_super) {
+        __extends(Pet, _super);
 
-      function TestModel() {
-        _ref = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
+        function Pet() {
+          _ref = Pet.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
 
-      return TestModel;
+        return Pet;
 
-    })(dermis.Model);
-    mod = new TestModel({
-      wut: 2
+      })(dermis.Model);
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref1 = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref1;
+        }
+
+        TestModel.prototype.casts = {
+          dog: Pet
+        };
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel;
+      mod.on("change:dog", function(v) {
+        (v instanceof Pet).should.equal(true);
+        v.get('name').should.equal("Fido");
+        return done();
+      });
+      return mod.set("dog", {
+        name: "Fido"
+      });
     });
-    mod.has("wut").should.equal(true);
-    return done();
+    return it("should be able to set with casting (functions)", function(done) {
+      var Pet, TestModel, mod, _ref, _ref1;
+
+      Pet = (function(_super) {
+        __extends(Pet, _super);
+
+        function Pet() {
+          _ref = Pet.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return Pet;
+
+      })(dermis.Model);
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref1 = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref1;
+        }
+
+        TestModel.prototype.casts = {
+          dog: function(v) {
+            return new Pet(v);
+          }
+        };
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel;
+      mod.on("change:dog", function(v) {
+        (v instanceof Pet).should.equal(true);
+        v.get('name').should.equal("Fido");
+        return done();
+      });
+      return mod.set("dog", {
+        name: "Fido"
+      });
+    });
   });
-  return it("should be able to clear props via clear", function(done) {
-    var TestModel, mod, _ref;
+  describe("accessors", function() {
+    return it("should be able to add accessors (models)", function(done) {
+      var TestModel, called, mod, _ref;
 
-    TestModel = (function(_super) {
-      __extends(TestModel, _super);
+      called = false;
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
 
-      function TestModel() {
-        _ref = TestModel.__super__.constructor.apply(this, arguments);
-        return _ref;
-      }
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
 
-      return TestModel;
+        TestModel.prototype.accessors = {
+          name: {
+            set: function(v) {
+              return v.should.equal("Fido");
+            },
+            get: function() {
+              return "Chollo";
+            }
+          }
+        };
 
-    })(dermis.Model);
-    mod = new TestModel({
-      wut: 2
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel;
+      mod.set("name", "Fido");
+      mod.get("name").should.equal("Chollo");
+      return done();
     });
-    mod.toJSON().should.eql({
-      wut: 2
+  });
+  describe("toJSON", function() {
+    it("should be able to list props", function(done) {
+      var TestModel, mod, _ref;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel({
+        wut: 2
+      });
+      mod.toJSON().should.eql({
+        wut: 2
+      });
+      return done();
     });
-    mod.clear();
-    mod.toJSON().should.eql({});
-    return done();
+    it("should be able list props with reasonable nesting", function(done) {
+      var friends, mod;
+
+      friends = new dermis.Collection([
+        new dermis.Model({
+          name: "tobias"
+        }), new dermis.Model({
+          name: "gobias"
+        })
+      ]);
+      friends.set("type", "best");
+      mod = new dermis.Model({
+        name: "Bob",
+        friends: friends
+      });
+      mod.toJSON().should.eql({
+        name: "Bob",
+        friends: {
+          type: "best",
+          models: [
+            {
+              name: "tobias"
+            }, {
+              name: "gobias"
+            }
+          ]
+        }
+      });
+      return done();
+    });
+    return it("should be able to list props with heavy nesting", function(done) {
+      var Friends, TestModel, mod, robias, _ref, _ref1;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        TestModel.prototype.casts = {
+          friends: Friends
+        };
+
+        return TestModel;
+
+      })(dermis.Model);
+      Friends = (function(_super) {
+        __extends(Friends, _super);
+
+        function Friends() {
+          _ref1 = Friends.__super__.constructor.apply(this, arguments);
+          return _ref1;
+        }
+
+        Friends.prototype.model = TestModel;
+
+        return Friends;
+
+      })(dermis.Collection);
+      robias = new TestModel({
+        name: "Robias",
+        friends: [
+          new TestModel({
+            name: "Gobias"
+          })
+        ]
+      });
+      mod = new TestModel({
+        name: "Gobias",
+        bestFriend: robias,
+        friends: [
+          robias, new TestModel({
+            name: "Fobias"
+          })
+        ]
+      });
+      mod.toJSON().should.eql({
+        name: "Gobias",
+        bestFriend: {
+          name: "Robias",
+          friends: [
+            {
+              name: "Gobias"
+            }
+          ]
+        },
+        friends: [
+          {
+            name: "Robias",
+            friends: [
+              {
+                name: "Gobias"
+              }
+            ]
+          }, {
+            name: "Fobias"
+          }
+        ]
+      });
+      return done();
+    });
+  });
+  describe("clear", function() {
+    return it("should be able to clear props via clear", function(done) {
+      var TestModel, mod, _ref;
+
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel({
+        wut: 2
+      });
+      mod.toJSON().should.eql({
+        wut: 2
+      });
+      mod.clear();
+      mod.toJSON().should.eql({});
+      return done();
+    });
+  });
+  return describe("multiple", function() {
+    return it("should be able to set with defaults and casting", function(done) {
+      var Pet, TestModel, mod, _ref, _ref1;
+
+      Pet = (function(_super) {
+        __extends(Pet, _super);
+
+        function Pet() {
+          _ref = Pet.__super__.constructor.apply(this, arguments);
+          return _ref;
+        }
+
+        return Pet;
+
+      })(dermis.Model);
+      TestModel = (function(_super) {
+        __extends(TestModel, _super);
+
+        function TestModel() {
+          _ref1 = TestModel.__super__.constructor.apply(this, arguments);
+          return _ref1;
+        }
+
+        TestModel.prototype.casts = {
+          dog: Pet
+        };
+
+        TestModel.prototype.defaults = {
+          dog: {
+            name: "Fido"
+          }
+        };
+
+        return TestModel;
+
+      })(dermis.Model);
+      mod = new TestModel;
+      should.exist(mod.get('dog'));
+      (mod.get('dog') instanceof Pet).should.equal(true);
+      mod.get('dog').get('name').should.equal("Fido");
+      return done();
+    });
   });
 });

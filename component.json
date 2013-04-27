@@ -8,7 +8,9 @@
     "segmentio/extend": "*",
     "anthonyshort/event-splitter": "*",
     "visionmedia/page.js": "*",
-    "visionmedia/superagent": "*"
+    "visionmedia/superagent": "*",
+    "aheckmann/mpath": "*",
+    "yields/prevent": "*"
   },
   "main": "dist/dermis.js",
   "scripts": [
@@ -17,6 +19,8 @@
     "dist/rivetsConfig.js",
     "dist/syncAdapter.js",
     "dist/util.js",
+    "dist/toJSON.js",
+    "dist/modelAdapter.js",
     
     "dist/Model.js",
     "dist/Collection.js",

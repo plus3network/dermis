@@ -14,6 +14,10 @@ Model = require('./Model');
 Collection = (function(_super) {
   __extends(Collection, _super);
 
+  Collection._isCollection = true;
+
+  Collection.prototype._isCollection = true;
+
   function Collection(items) {
     Collection.__super__.constructor.apply(this, arguments);
     if (!this.has('models')) {
@@ -36,11 +40,7 @@ Collection = (function(_super) {
       }
       return this;
     }
-    if (this.model && !(o instanceof Model)) {
-      mod = new this.model(o);
-    } else {
-      mod = o;
-    }
+    mod = this._processModel(o);
     this.get('models').push(mod);
     this.set('models', this.get('models'), silent);
     if (!silent) {
@@ -72,6 +72,25 @@ Collection = (function(_super) {
 
   Collection.prototype.removeAt = function(idx, silent) {
     return this.remove(this.at(idx), silent);
+  };
+
+  Collection.prototype.replace = function(o, nu, silent) {
+    var idx;
+
+    idx = this.indexOf(o);
+    if (idx !== -1) {
+      this.replaceAt(idx, nu, silent);
+    }
+    return this;
+  };
+
+  Collection.prototype.replaceAt = function(idx, nu, silent) {
+    var mods;
+
+    mods = this.get('models');
+    mods[idx] = this._processModel(nu);
+    this.set('models', mods, silent);
+    return this;
   };
 
   Collection.prototype.reset = function(o, silent) {
@@ -159,20 +178,6 @@ Collection = (function(_super) {
     return this.get('models');
   };
 
-  Collection.prototype.toJSON = function() {
-    var out;
-
-    out = Collection.__super__.toJSON.apply(this, arguments);
-    out.models = this.map(function(mod) {
-      if (mod != null ? mod.toJSON : void 0) {
-        return mod.toJSON();
-      } else {
-        return mod;
-      }
-    });
-    return out;
-  };
-
   Collection.prototype.fetch = function(opt, cb) {
     var _this = this;
 
@@ -192,12 +197,24 @@ Collection = (function(_super) {
       if (Array.isArray(res.body)) {
         _this.reset(res.body);
       }
+      _this._fetched = true;
       _this.emit("fetched", res);
       if (cb) {
         return cb(err, res);
       }
     });
     return this;
+  };
+
+  Collection.prototype._processModel = function(o) {
+    var mod;
+
+    if (this.model && !(o instanceof Model)) {
+      mod = new this.model(o);
+    } else {
+      mod = o;
+    }
+    return mod;
   };
 
   return Collection;
