@@ -235,9 +235,9 @@ class Collection extends Model
         cb err if cb
         return
       @reset res.body if Array.isArray res.body
+      cb err, res if cb
       @_fetched = true
       @emit "fetched", res
-      cb err, res if cb
     return @
 
   _processModel: (o) ->

@@ -197,11 +197,11 @@ Collection = (function(_super) {
       if (Array.isArray(res.body)) {
         _this.reset(res.body);
       }
-      _this._fetched = true;
-      _this.emit("fetched", res);
       if (cb) {
-        return cb(err, res);
+        cb(err, res);
       }
+      _this._fetched = true;
+      return _this.emit("fetched", res);
     });
     return this;
   };

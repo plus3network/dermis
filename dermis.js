@@ -3242,11 +3242,11 @@ Model = (function(_super) {
       if (typeof res.body === 'object') {
         _this.set(res.body);
       }
-      _this._fetched = true;
-      _this.emit("fetched", res);
       if (cb) {
-        return cb(err, res);
+        cb(err, res);
       }
+      _this._fetched = true;
+      return _this.emit("fetched", res);
     });
     return this;
   };
@@ -3267,10 +3267,10 @@ Model = (function(_super) {
         }
         return;
       }
-      _this.emit("saved", res);
       if (cb) {
-        return cb(err, res);
+        cb(err, res);
       }
+      return _this.emit("saved", res);
     });
     return this;
   };
@@ -3291,10 +3291,10 @@ Model = (function(_super) {
         }
         return;
       }
-      _this.emit("created", res);
       if (cb) {
-        return cb(err, res);
+        cb(err, res);
       }
+      return _this.emit("created", res);
     });
     return this;
   };
@@ -3315,10 +3315,10 @@ Model = (function(_super) {
         }
         return;
       }
-      _this.emit("destroyed", res);
       if (cb) {
-        return cb(err, res);
+        cb(err, res);
       }
+      return _this.emit("created", res);
     });
     return this;
   };
@@ -3544,11 +3544,11 @@ Collection = (function(_super) {
       if (Array.isArray(res.body)) {
         _this.reset(res.body);
       }
-      _this._fetched = true;
-      _this.emit("fetched", res);
       if (cb) {
-        return cb(err, res);
+        cb(err, res);
       }
+      _this._fetched = true;
+      return _this.emit("fetched", res);
     });
     return this;
   };

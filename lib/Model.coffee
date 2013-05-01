@@ -173,9 +173,9 @@ class Model extends Emitter
 
       res.body = @format res.body if @format?
       @set res.body if typeof res.body is 'object'
+      cb err, res if cb
       @_fetched = true
       @emit "fetched", res
-      cb err, res if cb
     return @
 
   # ### save(options, callback)
@@ -199,8 +199,8 @@ class Model extends Emitter
         @emit "saveError", err
         cb err if cb
         return
-      @emit "saved", res
       cb err, res if cb
+      @emit "saved", res
     return @
 
   # ### create(options, callback)
@@ -224,8 +224,8 @@ class Model extends Emitter
         @emit "createError", err
         cb err if cb
         return
-      @emit "created", res
       cb err, res if cb
+      @emit "created", res
     return @
 
   # ### destroy(options, callback)
@@ -249,8 +249,8 @@ class Model extends Emitter
         @emit "destroyError", err
         cb err if cb
         return
-      @emit "destroyed", res
       cb err, res if cb
+      @emit "created", res
     return @
 
   # ### fetched(fn)
