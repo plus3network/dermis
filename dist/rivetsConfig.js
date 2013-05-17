@@ -94,6 +94,20 @@ cfg = {
         return arr.sort().reverse();
       }
       return arr.sort();
+    },
+    sortBy: function(arr, field, direction) {
+      if (direction == null) {
+        direction = 'asc';
+      }
+      if (direction === 'desc') {
+        return arr.sort(function(a, b) {
+          return b[field] > a[field];
+        });
+      } else {
+        return arr.sort(function(a, b) {
+          return a[field] > b[field];
+        });
+      }
     }
   },
   adapter: {

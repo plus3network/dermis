@@ -130,6 +130,12 @@ describe "binding formatters", ->
         .should
         .eql [1,2,3,4,5]
       done()
+    it 'should work with strings', (done) ->
+      formatters
+        .sort(["Banana", "Orange", "Apple", "Mango"])
+        .should
+        .eql ["Apple", "Banana", "Mango", "Orange"]
+      done()
     it 'should sort asc if specified', (done) ->
       formatters
         .sort([5,3,1,2,4], 'asc')
@@ -141,6 +147,42 @@ describe "binding formatters", ->
         .sort([5,3,1,2,4], 'desc')
         .should
         .eql [5,4,3,2,1]
+      done()
+
+  describe "sortBy", ->
+    it 'should sort asc by default on specified field', (done) ->
+      formatters
+        .sortBy([
+          name: 'Dune'
+          date: '12/14/84'
+        ,
+          name: 'Batman',
+          date: '6/23/89']
+        , 'name')
+        .should
+        .eql [
+          name: 'Batman',
+          date: '6/23/89'
+        ,
+          name: 'Dune'
+          date: '12/14/84']
+      done()
+    it 'should sort desc when specified', (done) ->
+      formatters
+        .sortBy([
+          name: 'Batman',
+          date: '6/23/89'
+        ,
+          name: 'Dune'
+          date: '12/14/84']
+        , 'name', 'desc')
+        .should
+        .eql [
+          name: 'Dune'
+          date: '12/14/84'
+        ,
+          name: 'Batman',
+          date: '6/23/89']
       done()
 
 

@@ -136,12 +136,23 @@ cfg =
         return false
 
     # ### sort
-    # ```data-text="movies | sort [asc | desc]"```
+    # ```data-each="movies.models | sort [asc | desc]"```
     #
     # Sorts collection in asc or desc order
     sort: (arr, direction='asc') ->
       return arr.sort().reverse() if direction is 'desc'
       return arr.sort()
+
+    # ### sortBy
+    # ```data-each="movies | sortBy field, [asc | desc]"```
+    #
+    # Sorts collection in asc or desc order on a field
+    sortBy: (arr, field, direction='asc') ->
+      if direction is 'desc'
+        return arr.sort (a, b) -> b[field] > a[field]
+      else
+        return arr.sort (a, b) -> a[field] > b[field]
+  
 
   adapter:
     subscribe: (obj, kp, cb) ->

@@ -151,9 +151,13 @@ describe("binding formatters", function() {
       return newFunction.call(fakeScope, fakeEvent);
     });
   });
-  return describe("sort", function() {
+  describe("sort", function() {
     it('should sort asc by default', function(done) {
       formatters.sort([5, 3, 1, 2, 4]).should.eql([1, 2, 3, 4, 5]);
+      return done();
+    });
+    it('should work with strings', function(done) {
+      formatters.sort(["Banana", "Orange", "Apple", "Mango"]).should.eql(["Apple", "Banana", "Mango", "Orange"]);
       return done();
     });
     it('should sort asc if specified', function(done) {
@@ -162,6 +166,48 @@ describe("binding formatters", function() {
     });
     return it('should sort desc if specified', function(done) {
       formatters.sort([5, 3, 1, 2, 4], 'desc').should.eql([5, 4, 3, 2, 1]);
+      return done();
+    });
+  });
+  return describe("sortBy", function() {
+    it('should sort asc by default on specified field', function(done) {
+      formatters.sortBy([
+        {
+          name: 'Dune',
+          date: '12/14/84'
+        }, {
+          name: 'Batman',
+          date: '6/23/89'
+        }
+      ], 'name').should.eql([
+        {
+          name: 'Batman',
+          date: '6/23/89'
+        }, {
+          name: 'Dune',
+          date: '12/14/84'
+        }
+      ]);
+      return done();
+    });
+    return it('should sort desc when specified', function(done) {
+      formatters.sortBy([
+        {
+          name: 'Batman',
+          date: '6/23/89'
+        }, {
+          name: 'Dune',
+          date: '12/14/84'
+        }
+      ], 'name', 'desc').should.eql([
+        {
+          name: 'Dune',
+          date: '12/14/84'
+        }, {
+          name: 'Batman',
+          date: '6/23/89'
+        }
+      ]);
       return done();
     });
   });
