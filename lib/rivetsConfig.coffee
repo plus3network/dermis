@@ -135,6 +135,14 @@ cfg =
         v.call @, e
         return false
 
+    # ### sort
+    # ```data-text="movies | sort [asc | desc]"```
+    #
+    # Sorts collection in asc or desc order
+    sort: (arr, direction='asc') ->
+      return arr.sort().reverse() if direction is 'desc'
+      return arr.sort()
+
   adapter:
     subscribe: (obj, kp, cb) ->
       obj.on "change:#{kp}", cb

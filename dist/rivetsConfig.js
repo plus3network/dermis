@@ -85,6 +85,15 @@ cfg = {
         v.call(this, e);
         return false;
       };
+    },
+    sort: function(arr, direction) {
+      if (direction == null) {
+        direction = 'asc';
+      }
+      if (direction === 'desc') {
+        return arr.sort().reverse();
+      }
+      return arr.sort();
     }
   },
   adapter: {

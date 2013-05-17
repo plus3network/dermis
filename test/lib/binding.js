@@ -130,7 +130,7 @@ describe("binding formatters", function() {
       return done();
     });
   });
-  return describe("cancelEvent", function() {
+  describe("cancelEvent", function() {
     return it('should work', function(done) {
       var called, fakeEvent, fakeScope, newFunction;
 
@@ -149,6 +149,20 @@ describe("binding formatters", function() {
         return done();
       });
       return newFunction.call(fakeScope, fakeEvent);
+    });
+  });
+  return describe("sort", function() {
+    it('should sort asc by default', function(done) {
+      formatters.sort([5, 3, 1, 2, 4]).should.eql([1, 2, 3, 4, 5]);
+      return done();
+    });
+    it('should sort asc if specified', function(done) {
+      formatters.sort([5, 3, 1, 2, 4], 'asc').should.eql([1, 2, 3, 4, 5]);
+      return done();
+    });
+    return it('should sort desc if specified', function(done) {
+      formatters.sort([5, 3, 1, 2, 4], 'desc').should.eql([5, 4, 3, 2, 1]);
+      return done();
     });
   });
 });

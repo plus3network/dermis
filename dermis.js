@@ -414,13 +414,13 @@ function guid (prefix) {
 };
 
 });
-require.register("mikeric-rivets/lib/rivets.js", function(exports, require, module){
-// rivets.js
-// version: 0.4.9
+require.register("mikeric-rivets/dist/rivets.js", function(exports, require, module){
+// Rivets.js
+// version: 0.5.2
 // author: Michael Richards
 // license: MIT
 (function() {
-  var Rivets, bindEvent, factory, getInputValue, unbindEvent,
+  var Rivets,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __slice = [].slice,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
@@ -434,28 +434,24 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
   }
 
   Rivets.Binding = (function() {
-
-    function Binding(el, type, model, keypath, options) {
+    function Binding(view, el, type, key, keypath, options) {
       var identifier, regexp, value, _ref;
+
+      this.view = view;
       this.el = el;
       this.type = type;
-      this.model = model;
+      this.key = key;
       this.keypath = keypath;
       this.options = options != null ? options : {};
+      this.update = __bind(this.update, this);
       this.unbind = __bind(this.unbind, this);
-
       this.bind = __bind(this.bind, this);
-
       this.publish = __bind(this.publish, this);
-
       this.sync = __bind(this.sync, this);
-
       this.set = __bind(this.set, this);
-
       this.formattedValue = __bind(this.formattedValue, this);
-
-      if (!(this.binder = Rivets.binders[type])) {
-        _ref = Rivets.binders;
+      if (!(this.binder = this.view.binders[type])) {
+        _ref = this.view.binders;
         for (identifier in _ref) {
           value = _ref[identifier];
           if (identifier !== '*' && identifier.indexOf('*') !== -1) {
@@ -468,23 +464,25 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
           }
         }
       }
-      this.binder || (this.binder = Rivets.binders['*']);
+      this.binder || (this.binder = this.view.binders['*']);
       if (this.binder instanceof Function) {
         this.binder = {
           routine: this.binder
         };
       }
       this.formatters = this.options.formatters || [];
+      this.model = this.view.models[this.key];
     }
 
     Binding.prototype.formattedValue = function(value) {
-      var args, formatter, id, _i, _len, _ref, _ref1, _ref2, _ref3;
+      var args, formatter, id, _i, _len, _ref;
+
       _ref = this.formatters;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         formatter = _ref[_i];
         args = formatter.split(/\s+/);
         id = args.shift();
-        formatter = this.model[id] instanceof Function ? this.model[id] : ((_ref1 = this.options) != null ? (_ref2 = _ref1.bindingOptions) != null ? (_ref3 = _ref2.formatters) != null ? _ref3[id] : void 0 : void 0 : void 0) instanceof Function ? this.options.bindingOptions.formatters[id] : Rivets.formatters[id];
+        formatter = this.model[id] instanceof Function ? this.model[id] : this.view.formatters[id];
         if ((formatter != null ? formatter.read : void 0) instanceof Function) {
           value = formatter.read.apply(formatter, [value].concat(__slice.call(args)));
         } else if (formatter instanceof Function) {
@@ -496,39 +494,42 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
 
     Binding.prototype.set = function(value) {
       var _ref;
+
       value = value instanceof Function && !this.binder["function"] ? this.formattedValue(value.call(this.model)) : this.formattedValue(value);
       return (_ref = this.binder.routine) != null ? _ref.call(this, this.el, value) : void 0;
     };
 
     Binding.prototype.sync = function() {
-      return this.set(this.options.bypass ? this.model[this.keypath] : Rivets.config.adapter.read(this.model, this.keypath));
+      return this.set(this.options.bypass ? this.model[this.keypath] : this.view.config.adapter.read(this.model, this.keypath));
     };
 
     Binding.prototype.publish = function() {
       var args, formatter, id, value, _i, _len, _ref, _ref1, _ref2;
-      value = getInputValue(this.el);
+
+      value = Rivets.Util.getInputValue(this.el);
       _ref = this.formatters.slice(0).reverse();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         formatter = _ref[_i];
         args = formatter.split(/\s+/);
         id = args.shift();
-        if ((_ref1 = Rivets.formatters[id]) != null ? _ref1.publish : void 0) {
-          value = (_ref2 = Rivets.formatters[id]).publish.apply(_ref2, [value].concat(__slice.call(args)));
+        if ((_ref1 = this.view.formatters[id]) != null ? _ref1.publish : void 0) {
+          value = (_ref2 = this.view.formatters[id]).publish.apply(_ref2, [value].concat(__slice.call(args)));
         }
       }
-      return Rivets.config.adapter.publish(this.model, this.keypath, value);
+      return this.view.config.adapter.publish(this.model, this.keypath, value);
     };
 
     Binding.prototype.bind = function() {
       var dependency, keypath, model, _i, _len, _ref, _ref1, _ref2, _results;
+
       if ((_ref = this.binder.bind) != null) {
         _ref.call(this, this.el);
       }
       if (this.options.bypass) {
         this.sync();
       } else {
-        Rivets.config.adapter.subscribe(this.model, this.keypath, this.sync);
-        if (Rivets.config.preloadData) {
+        this.view.config.adapter.subscribe(this.model, this.keypath, this.sync);
+        if (this.view.config.preloadData) {
           this.sync();
         }
       }
@@ -545,7 +546,7 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
             model = this.view.models[dependency.shift()];
             keypath = dependency.join('.');
           }
-          _results.push(Rivets.config.adapter.subscribe(model, keypath, this.sync));
+          _results.push(this.view.config.adapter.subscribe(model, keypath, this.sync));
         }
         return _results;
       }
@@ -553,11 +554,12 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
 
     Binding.prototype.unbind = function() {
       var dependency, keypath, model, _i, _len, _ref, _ref1, _ref2, _results;
+
       if ((_ref = this.binder.unbind) != null) {
         _ref.call(this, this.el);
       }
       if (!this.options.bypass) {
-        Rivets.config.adapter.unsubscribe(this.model, this.keypath, this.sync);
+        this.view.config.adapter.unsubscribe(this.model, this.keypath, this.sync);
       }
       if ((_ref1 = this.options.dependencies) != null ? _ref1.length : void 0) {
         _ref2 = this.options.dependencies;
@@ -572,10 +574,16 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
             model = this.view.models[dependency.shift()];
             keypath = dependency.join('.');
           }
-          _results.push(Rivets.config.adapter.unsubscribe(model, keypath, this.sync));
+          _results.push(this.view.config.adapter.unsubscribe(model, keypath, this.sync));
         }
         return _results;
       }
+    };
+
+    Binding.prototype.update = function() {
+      this.unbind();
+      this.model = this.view.models[this.key];
+      return this.bind();
     };
 
     return Binding;
@@ -583,34 +591,49 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
   })();
 
   Rivets.View = (function() {
-
     function View(els, models, options) {
+      var k, option, v, _base, _i, _len, _ref, _ref1, _ref2, _ref3;
+
       this.els = els;
       this.models = models;
-      this.options = options;
+      this.options = options != null ? options : {};
+      this.update = __bind(this.update, this);
       this.publish = __bind(this.publish, this);
-
       this.sync = __bind(this.sync, this);
-
       this.unbind = __bind(this.unbind, this);
-
       this.bind = __bind(this.bind, this);
-
       this.select = __bind(this.select, this);
-
       this.build = __bind(this.build, this);
-
       this.bindingRegExp = __bind(this.bindingRegExp, this);
-
       if (!(this.els.jquery || this.els instanceof Array)) {
         this.els = [this.els];
+      }
+      _ref = ['config', 'binders', 'formatters'];
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        option = _ref[_i];
+        this[option] = {};
+        if (this.options[option]) {
+          _ref1 = this.options[option];
+          for (k in _ref1) {
+            v = _ref1[k];
+            this[option][k] = v;
+          }
+        }
+        _ref2 = Rivets[option];
+        for (k in _ref2) {
+          v = _ref2[k];
+          if ((_ref3 = (_base = this[option])[k]) == null) {
+            _base[k] = v;
+          }
+        }
       }
       this.build();
     }
 
     View.prototype.bindingRegExp = function() {
       var prefix;
-      prefix = Rivets.config.prefix;
+
+      prefix = this.config.prefix;
       if (prefix) {
         return new RegExp("^data-" + prefix + "-");
       } else {
@@ -621,19 +644,21 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
     View.prototype.build = function() {
       var bindingRegExp, el, node, parse, skipNodes, _i, _j, _len, _len1, _ref, _ref1,
         _this = this;
+
       this.bindings = [];
       skipNodes = [];
       bindingRegExp = this.bindingRegExp();
       parse = function(node) {
-        var attribute, attributes, binder, binding, context, ctx, dependencies, identifier, keypath, model, n, options, path, pipe, pipes, regexp, splitPath, type, value, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
+        var attribute, attributes, binder, context, ctx, dependencies, identifier, key, keypath, n, options, path, pipe, pipes, regexp, splitPath, type, value, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
+
         if (__indexOf.call(skipNodes, node) < 0) {
           _ref = node.attributes;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             attribute = _ref[_i];
             if (bindingRegExp.test(attribute.name)) {
               type = attribute.name.replace(bindingRegExp, '');
-              if (!(binder = Rivets.binders[type])) {
-                _ref1 = Rivets.binders;
+              if (!(binder = _this.binders[type])) {
+                _ref1 = _this.binders;
                 for (identifier in _ref1) {
                   value = _ref1[identifier];
                   if (identifier !== '*' && identifier.indexOf('*') !== -1) {
@@ -644,7 +669,7 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
                   }
                 }
               }
-              binder || (binder = Rivets.binders['*']);
+              binder || (binder = _this.binders['*']);
               if (binder.block) {
                 _ref2 = node.getElementsByTagName('*');
                 for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
@@ -660,12 +685,10 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
             attribute = _ref3[_k];
             if (bindingRegExp.test(attribute.name)) {
               options = {};
-              if ((_this.options != null) && typeof _this.options === 'object') {
-                options.bindingOptions = _this.options;
-              }
               type = attribute.name.replace(bindingRegExp, '');
               pipes = (function() {
                 var _l, _len3, _ref4, _results;
+
                 _ref4 = attribute.value.split('|');
                 _results = [];
                 for (_l = 0, _len3 = _ref4.length; _l < _len3; _l++) {
@@ -676,6 +699,7 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
               })();
               context = (function() {
                 var _l, _len3, _ref4, _results;
+
                 _ref4 = pipes.shift().split('<');
                 _results = [];
                 for (_l = 0, _len3 = _ref4.length; _l < _len3; _l++) {
@@ -689,19 +713,17 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
               options.formatters = pipes;
               options.bypass = path.indexOf(':') !== -1;
               if (splitPath[0]) {
-                model = _this.models[splitPath.shift()];
+                key = splitPath.shift();
               } else {
-                model = _this.models;
+                key = null;
                 splitPath.shift();
               }
               keypath = splitPath.join('.');
-              if (model) {
+              if (_this.models[key] != null) {
                 if (dependencies = context.shift()) {
                   options.dependencies = dependencies.split(/\s+/);
                 }
-                binding = new Rivets.Binding(node, type, model, keypath, options);
-                binding.view = _this;
-                _this.bindings.push(binding);
+                _this.bindings.push(new Rivets.Binding(_this, node, type, key, keypath, options));
               }
             }
           }
@@ -726,6 +748,7 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
 
     View.prototype.select = function(fn) {
       var binding, _i, _len, _ref, _results;
+
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -739,6 +762,7 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
 
     View.prototype.bind = function() {
       var binding, _i, _len, _ref, _results;
+
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -750,6 +774,7 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
 
     View.prototype.unbind = function() {
       var binding, _i, _len, _ref, _results;
+
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -761,6 +786,7 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
 
     View.prototype.sync = function() {
       var binding, _i, _len, _ref, _results;
+
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -772,6 +798,7 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
 
     View.prototype.publish = function() {
       var binding, _i, _len, _ref, _results;
+
       _ref = this.select(function(b) {
         return b.binder.publishes;
       });
@@ -783,73 +810,102 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
       return _results;
     };
 
+    View.prototype.update = function(models) {
+      var binding, key, model, _results;
+
+      if (models == null) {
+        models = {};
+      }
+      _results = [];
+      for (key in models) {
+        model = models[key];
+        this.models[key] = model;
+        _results.push((function() {
+          var _i, _len, _ref, _results1;
+
+          _ref = this.select(function(b) {
+            return b.key === key;
+          });
+          _results1 = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            binding = _ref[_i];
+            _results1.push(binding.update());
+          }
+          return _results1;
+        }).call(this));
+      }
+      return _results;
+    };
+
     return View;
 
   })();
 
-  bindEvent = function(el, event, handler, context) {
-    var fn;
-    fn = function(e) {
-      return handler.call(context, e);
-    };
-    if (window.jQuery != null) {
-      el = jQuery(el);
-      if (el.on != null) {
-        el.on(event, fn);
-      } else {
-        el.bind(event, fn);
-      }
-    } else if (window.addEventListener != null) {
-      el.addEventListener(event, fn, false);
-    } else {
-      event = 'on' + event;
-      el.attachEvent(event, fn);
-    }
-    return fn;
-  };
+  Rivets.Util = {
+    bindEvent: function(el, event, handler, view) {
+      var fn;
 
-  unbindEvent = function(el, event, fn) {
-    if (window.jQuery != null) {
-      el = jQuery(el);
-      if (el.off != null) {
-        return el.off(event, fn);
+      fn = function(ev) {
+        return handler.call(this, ev, view);
+      };
+      if (window.jQuery != null) {
+        el = jQuery(el);
+        if (el.on != null) {
+          el.on(event, fn);
+        } else {
+          el.bind(event, fn);
+        }
+      } else if (window.addEventListener != null) {
+        el.addEventListener(event, fn, false);
       } else {
-        return el.unbind(event, fn);
+        event = 'on' + event;
+        el.attachEvent(event, fn);
       }
-    } else if (window.removeEventListener) {
-      return el.removeEventListener(event, fn, false);
-    } else {
-      event = 'on' + event;
-      return el.detachEvent(event, fn);
-    }
-  };
+      return fn;
+    },
+    unbindEvent: function(el, event, fn) {
+      if (window.jQuery != null) {
+        el = jQuery(el);
+        if (el.off != null) {
+          return el.off(event, fn);
+        } else {
+          return el.unbind(event, fn);
+        }
+      } else if (window.removeEventListener) {
+        return el.removeEventListener(event, fn, false);
+      } else {
+        event = 'on' + event;
+        return el.detachEvent(event, fn);
+      }
+    },
+    getInputValue: function(el) {
+      var o, _i, _len, _results;
 
-  getInputValue = function(el) {
-    var o, _i, _len, _results;
-    if (window.jQuery != null) {
-      el = jQuery(el);
-      switch (el[0].type) {
-        case 'checkbox':
-          return el.is(':checked');
-        default:
-          return el.val();
-      }
-    } else {
-      switch (el.type) {
-        case 'checkbox':
-          return el.checked;
-        case 'select-multiple':
-          _results = [];
-          for (_i = 0, _len = el.length; _i < _len; _i++) {
-            o = el[_i];
-            if (o.selected) {
-              _results.push(o.value);
+      if (window.jQuery != null) {
+        el = jQuery(el);
+        switch (el[0].type) {
+          case 'checkbox':
+            return el.is(':checked');
+          default:
+            return el.val();
+        }
+      } else {
+        switch (el.type) {
+          case 'checkbox':
+            return el.checked;
+          case 'select-multiple':
+            _results = [];
+            for (_i = 0, _len = el.length; _i < _len; _i++) {
+              o = el[_i];
+              if (o.selected) {
+                _results.push(o.value);
+              }
             }
-          }
-          return _results;
-          break;
-        default:
-          return el.value;
+            return _results;
+            break;
+          default:
+            return el.value;
+        }
       }
     }
   };
@@ -864,13 +920,14 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
     checked: {
       publishes: true,
       bind: function(el) {
-        return this.currentListener = bindEvent(el, 'change', this.publish);
+        return this.currentListener = Rivets.Util.bindEvent(el, 'change', this.publish);
       },
       unbind: function(el) {
-        return unbindEvent(el, 'change', this.currentListener);
+        return Rivets.Util.unbindEvent(el, 'change', this.currentListener);
       },
       routine: function(el, value) {
         var _ref;
+
         if (el.type === 'radio') {
           return el.checked = ((_ref = el.value) != null ? _ref.toString() : void 0) === (value != null ? value.toString() : void 0);
         } else {
@@ -881,13 +938,14 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
     unchecked: {
       publishes: true,
       bind: function(el) {
-        return this.currentListener = bindEvent(el, 'change', this.publish);
+        return this.currentListener = Rivets.Util.bindEvent(el, 'change', this.publish);
       },
       unbind: function(el) {
-        return unbindEvent(el, 'change', this.currentListener);
+        return Rivets.Util.unbindEvent(el, 'change', this.currentListener);
       },
       routine: function(el, value) {
         var _ref;
+
         if (el.type === 'radio') {
           return el.checked = ((_ref = el.value) != null ? _ref.toString() : void 0) !== (value != null ? value.toString() : void 0);
         } else {
@@ -907,13 +965,14 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
     value: {
       publishes: true,
       bind: function(el) {
-        return this.currentListener = bindEvent(el, 'change', this.publish);
+        return this.currentListener = Rivets.Util.bindEvent(el, 'change', this.publish);
       },
       unbind: function(el) {
-        return unbindEvent(el, 'change', this.currentListener);
+        return Rivets.Util.unbindEvent(el, 'change', this.currentListener);
       },
       routine: function(el, value) {
         var o, _i, _len, _ref, _ref1, _ref2, _results;
+
         if (window.jQuery != null) {
           el = jQuery(el);
           if ((value != null ? value.toString() : void 0) !== ((_ref = el.val()) != null ? _ref.toString() : void 0)) {
@@ -946,18 +1005,32 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
       "function": true,
       routine: function(el, value) {
         if (this.currentListener) {
-          unbindEvent(el, this.args[0], this.currentListener);
+          Rivets.Util.unbindEvent(el, this.args[0], this.currentListener);
         }
-        return this.currentListener = bindEvent(el, this.args[0], value, this.model);
+        return this.currentListener = Rivets.Util.bindEvent(el, this.args[0], value, this.view);
       }
     },
     "each-*": {
       block: true,
       bind: function(el, collection) {
-        return el.removeAttribute(['data', Rivets.config.prefix, this.type].join('-').replace('--', '-'));
+        return el.removeAttribute(['data', this.view.config.prefix, this.type].join('-').replace('--', '-'));
+      },
+      unbind: function(el, collection) {
+        var view, _i, _len, _ref, _results;
+
+        if (this.iterated != null) {
+          _ref = this.iterated;
+          _results = [];
+          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+            view = _ref[_i];
+            _results.push(view.unbind());
+          }
+          return _results;
+        }
       },
       routine: function(el, collection) {
-        var data, e, item, itemEl, m, n, previous, view, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _results;
+        var data, e, item, itemEl, k, m, n, options, previous, v, view, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4, _results;
+
         if (this.iterated != null) {
           _ref = this.iterated;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -989,7 +1062,20 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
             itemEl = el.cloneNode(true);
             previous = this.iterated.length ? this.iterated[this.iterated.length - 1].els[0] : this.marker;
             this.marker.parentNode.insertBefore(itemEl, (_ref3 = previous.nextSibling) != null ? _ref3 : null);
-            view = new Rivets.View(itemEl, data);
+            options = {
+              binders: this.view.options.binders,
+              formatters: this.view.options.binders,
+              config: {}
+            };
+            if (this.view.options.config) {
+              _ref4 = this.view.options.config;
+              for (k in _ref4) {
+                v = _ref4[k];
+                options.config[k] = v;
+              }
+            }
+            options.config.preloadData = true;
+            view = new Rivets.View(itemEl, data, options);
             view.bind();
             _results.push(this.iterated.push(view));
           }
@@ -999,6 +1085,7 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
     },
     "class-*": function(el, value) {
       var elClass;
+
       elClass = " " + el.className + " ";
       if (!value === (elClass.indexOf(" " + this.args[0] + " ") !== -1)) {
         return el.className = value ? "" + el.className + " " + this.args[0] : elClass.replace(" " + this.args[0] + " ", ' ').trim();
@@ -1019,12 +1106,13 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
 
   Rivets.formatters = {};
 
-  factory = function(exports) {
+  Rivets.factory = function(exports) {
     exports.binders = Rivets.binders;
     exports.formatters = Rivets.formatters;
     exports.config = Rivets.config;
     exports.configure = function(options) {
       var property, value;
+
       if (options == null) {
         options = {};
       }
@@ -1035,6 +1123,7 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
     };
     return exports.bind = function(el, models, options) {
       var view;
+
       if (models == null) {
         models = {};
       }
@@ -1048,14 +1137,14 @@ require.register("mikeric-rivets/lib/rivets.js", function(exports, require, modu
   };
 
   if (typeof exports === 'object') {
-    factory(exports);
+    Rivets.factory(exports);
   } else if (typeof define === 'function' && define.amd) {
     define(['exports'], function(exports) {
-      factory(this.rivets = exports);
+      Rivets.factory(this.rivets = exports);
       return exports;
     });
   } else {
-    factory(this.rivets = {});
+    Rivets.factory(this.rivets = {});
   }
 
 }).call(this);
@@ -1555,8 +1644,8 @@ require.register("visionmedia-superagent/lib/client.js", function(exports, requi
  * Module dependencies.
  */
 
-var Emitter = require('emitter')
-  , reduce = require('reduce');
+var Emitter = require('emitter');
+var reduce = require('reduce');
 
 /**
  * Root reference for iframes.
@@ -1571,6 +1660,30 @@ var root = 'undefined' == typeof window
  */
 
 function noop(){};
+
+/**
+ * Check if `obj` is a host object,
+ * we don't want to serialize these :)
+ *
+ * TODO: future proof, move to compoent land
+ *
+ * @param {Object} obj
+ * @return {Boolean}
+ * @api private
+ */
+
+function isHost(obj) {
+  var str = {}.toString.call(obj);
+
+  switch (str) {
+    case '[object File]':
+    case '[object Blob]':
+    case '[object FormData]':
+      return true;
+    default:
+      return false;
+  }
+}
 
 /**
  * Determine XHR.
@@ -2323,7 +2436,7 @@ Request.prototype.end = function(fn){
   xhr.open(this.method, this.url, true);
 
   // body
-  if ('GET' != this.method && 'HEAD' != this.method && 'string' != typeof data) {
+  if ('GET' != this.method && 'HEAD' != this.method && 'string' != typeof data && !isHost(data)) {
     // serialize stuff
     var serialize = request.serialize[this.getHeader('Content-Type')];
     if (serialize) data = serialize(data);
@@ -2902,6 +3015,15 @@ cfg = {
         v.call(this, e);
         return false;
       };
+    },
+    sort: function(arr, direction) {
+      if (direction == null) {
+        direction = 'asc';
+      }
+      if (direction === 'desc') {
+        return arr.sort().reverse();
+      }
+      return arr.sort();
     }
   },
   adapter: {
@@ -3981,10 +4103,10 @@ require.alias("component-indexof/index.js", "component-emitter/deps/indexof/inde
 require.alias("apily-guid/index.js", "dermis/deps/guid/index.js");
 require.alias("apily-guid/index.js", "guid/index.js");
 
-require.alias("mikeric-rivets/lib/rivets.js", "dermis/deps/rivets/lib/rivets.js");
-require.alias("mikeric-rivets/lib/rivets.js", "dermis/deps/rivets/index.js");
-require.alias("mikeric-rivets/lib/rivets.js", "rivets/index.js");
-require.alias("mikeric-rivets/lib/rivets.js", "mikeric-rivets/index.js");
+require.alias("mikeric-rivets/dist/rivets.js", "dermis/deps/rivets/dist/rivets.js");
+require.alias("mikeric-rivets/dist/rivets.js", "dermis/deps/rivets/index.js");
+require.alias("mikeric-rivets/dist/rivets.js", "rivets/index.js");
+require.alias("mikeric-rivets/dist/rivets.js", "mikeric-rivets/index.js");
 
 require.alias("segmentio-extend/index.js", "dermis/deps/extend/index.js");
 require.alias("segmentio-extend/index.js", "extend/index.js");

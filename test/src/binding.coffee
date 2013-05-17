@@ -123,6 +123,26 @@ describe "binding formatters", ->
 
       newFunction.call fakeScope, fakeEvent
 
+  describe "sort", ->
+    it 'should sort asc by default', (done) ->
+      formatters
+        .sort([5,3,1,2,4])
+        .should
+        .eql [1,2,3,4,5]
+      done()
+    it 'should sort asc if specified', (done) ->
+      formatters
+        .sort([5,3,1,2,4], 'asc')
+        .should
+        .eql [1,2,3,4,5]
+      done()
+    it 'should sort desc if specified', (done) ->
+      formatters
+        .sort([5,3,1,2,4], 'desc')
+        .should
+        .eql [5,4,3,2,1]
+      done()
+
 
 describe "binding adapter", ->
   {adapter} = dermis.internal.bindingConfig
