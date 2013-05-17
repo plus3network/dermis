@@ -169,7 +169,8 @@ describe("binding formatters", function() {
   });
   return describe("sortBy", function() {
     it('should sort asc by default on specified field', function(done) {
-      formatters.sortBy([
+      var expected, inp, out;
+      inp = [
         {
           name: 'Dune',
           date: '12/14/84'
@@ -177,7 +178,8 @@ describe("binding formatters", function() {
           name: 'Batman',
           date: '6/23/89'
         }
-      ], 'name').should.eql([
+      ];
+      expected = [
         {
           name: 'Batman',
           date: '6/23/89'
@@ -185,11 +187,15 @@ describe("binding formatters", function() {
           name: 'Dune',
           date: '12/14/84'
         }
-      ]);
+      ];
+      out = formatters.sortBy(inp, 'name');
+      out[0].name.should.equal(expected[0].name);
+      out[1].name.should.equal(expected[1].name);
       return done();
     });
     return it('should sort desc when specified', function(done) {
-      formatters.sortBy([
+      var expected, inp, out;
+      inp = [
         {
           name: 'Batman',
           date: '6/23/89'
@@ -197,7 +203,8 @@ describe("binding formatters", function() {
           name: 'Dune',
           date: '12/14/84'
         }
-      ], 'name', 'desc').should.eql([
+      ];
+      expected = [
         {
           name: 'Dune',
           date: '12/14/84'
@@ -205,7 +212,10 @@ describe("binding formatters", function() {
           name: 'Batman',
           date: '6/23/89'
         }
-      ]);
+      ];
+      out = formatters.sortBy(inp, 'name', 'desc');
+      out[0].name.should.equal(expected[0].name);
+      out[1].name.should.equal(expected[1].name);
       return done();
     });
   });

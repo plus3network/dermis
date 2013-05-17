@@ -151,38 +151,45 @@ describe "binding formatters", ->
 
   describe "sortBy", ->
     it 'should sort asc by default on specified field', (done) ->
-      formatters
-        .sortBy([
-          name: 'Dune'
-          date: '12/14/84'
-        ,
-          name: 'Batman',
-          date: '6/23/89']
-        , 'name')
-        .should
-        .eql [
-          name: 'Batman',
-          date: '6/23/89'
-        ,
-          name: 'Dune'
-          date: '12/14/84']
+      inp = [
+        name: 'Dune'
+        date: '12/14/84'
+      ,
+        name: 'Batman',
+        date: '6/23/89'
+      ]
+
+      expected = [
+        name: 'Batman',
+        date: '6/23/89'
+      ,
+        name: 'Dune'
+        date: '12/14/84'
+      ]
+      out = formatters.sortBy inp, 'name'
+      out[0].name.should.equal expected[0].name
+      out[1].name.should.equal expected[1].name
       done()
+
     it 'should sort desc when specified', (done) ->
-      formatters
-        .sortBy([
-          name: 'Batman',
-          date: '6/23/89'
-        ,
-          name: 'Dune'
-          date: '12/14/84']
-        , 'name', 'desc')
-        .should
-        .eql [
-          name: 'Dune'
-          date: '12/14/84'
-        ,
-          name: 'Batman',
-          date: '6/23/89']
+      inp = [
+        name: 'Batman',
+        date: '6/23/89'
+      ,
+        name: 'Dune'
+        date: '12/14/84'
+      ]
+
+      expected = [
+        name: 'Dune'
+        date: '12/14/84'
+      ,
+        name: 'Batman',
+        date: '6/23/89'
+      ]
+      out = formatters.sortBy inp, 'name', 'desc'
+      out[0].name.should.equal expected[0].name
+      out[1].name.should.equal expected[1].name
       done()
 
 

@@ -148,10 +148,17 @@ cfg =
     #
     # Sorts collection in asc or desc order on a field
     sortBy: (arr, field, direction='asc') ->
-      if direction is 'desc'
-        return arr.sort (a, b) -> b[field] > a[field]
-      else
-        return arr.sort (a, b) -> a[field] > b[field]
+      reverse = (direction is 'desc')
+      sortFn = (a, b) -> 
+        if a[field] < b[field] 
+          out = -1
+        else if a[field] > b[field]
+          out = 1 
+        else 
+          out = 0
+        return out*[1,-1][+!!reverse]
+
+      return arr.sort sortFn
   
 
   adapter:
