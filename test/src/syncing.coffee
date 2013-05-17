@@ -101,20 +101,24 @@ describe "model syncing", ->
       mod.on "fetching", (opt) ->
         should.exist opt
         syncing = true
+
       mod.on "fetched", (res) -> 
         should.exist res
         synced = true
+
       mod.fetched ->
         fetched = true
+
       mod.fetch (err, res) ->
-        should.not.exist err
-        should.exist res
-        res.status.should.equal 200
-        mod.get("test").should.equal "hello"
-        syncing.should.equal true
-        synced.should.equal true
-        fetched.should.equal true
-        done()
+        process.nextTick ->
+          should.not.exist err
+          should.exist res
+          res.status.should.equal 200
+          mod.get("test").should.equal "hello"
+          syncing.should.equal true
+          synced.should.equal true
+          fetched.should.equal true
+          done()
 
     it "should work with single url", (done) ->
       class TestModel extends dermis.Model
@@ -133,14 +137,15 @@ describe "model syncing", ->
       mod.fetched ->
         fetched = true
       mod.fetch (err, res) ->
-        should.not.exist err
-        should.exist res
-        res.status.should.equal 200
-        mod.get("test").should.equal "hello"
-        syncing.should.equal true
-        synced.should.equal true
-        fetched.should.equal true
-        done()
+        process.nextTick ->
+          should.not.exist err
+          should.exist res
+          res.status.should.equal 200
+          mod.get("test").should.equal "hello"
+          syncing.should.equal true
+          synced.should.equal true
+          fetched.should.equal true
+          done()
 
   describe "save", ->
     it "should work with save url", (done) ->
@@ -164,13 +169,14 @@ describe "model syncing", ->
         should.exist res
         synced = true
       mod.save (err, res) ->
-        should.not.exist err
-        should.exist res
-        res.status.should.equal 200
-        mod.get("test").should.equal "hello"
-        syncing.should.equal true
-        synced.should.equal true
-        done()
+        process.nextTick ->
+          should.not.exist err
+          should.exist res
+          res.status.should.equal 200
+          mod.get("test").should.equal "hello"
+          syncing.should.equal true
+          synced.should.equal true
+          done()
 
     it "should work with single url", (done) ->
       class TestModel extends dermis.Model
@@ -188,13 +194,14 @@ describe "model syncing", ->
         should.exist res
         synced = true
       mod.save (err, res) ->
-        should.not.exist err
-        should.exist res
-        res.status.should.equal 200
-        mod.get("test").should.equal "hello"
-        syncing.should.equal true
-        synced.should.equal true
-        done()
+        process.nextTick ->
+          should.not.exist err
+          should.exist res
+          res.status.should.equal 200
+          mod.get("test").should.equal "hello"
+          syncing.should.equal true
+          synced.should.equal true
+          done()
 
   describe "create", ->
     it "should work with create url", (done) ->
@@ -217,13 +224,14 @@ describe "model syncing", ->
         should.exist res
         synced = true
       mod.create (err, res) ->
-        should.not.exist err
-        should.exist res
-        res.status.should.equal 200
-        mod.get("test").should.equal "hello"
-        syncing.should.equal true
-        synced.should.equal true
-        done()
+        process.nextTick ->
+          should.not.exist err
+          should.exist res
+          res.status.should.equal 200
+          mod.get("test").should.equal "hello"
+          syncing.should.equal true
+          synced.should.equal true
+          done()
 
     it "should work with single url", (done) ->
       class TestModel extends dermis.Model
@@ -241,13 +249,14 @@ describe "model syncing", ->
         should.exist res
         synced = true
       mod.create (err, res) ->
-        should.not.exist err
-        should.exist res
-        res.status.should.equal 200
-        mod.get("test").should.equal "hello"
-        syncing.should.equal true
-        synced.should.equal true
-        done()
+        process.nextTick ->
+          should.not.exist err
+          should.exist res
+          res.status.should.equal 200
+          mod.get("test").should.equal "hello"
+          syncing.should.equal true
+          synced.should.equal true
+          done()
 
   describe "destroy", ->
     it "should work with destroy url", (done) ->
@@ -270,13 +279,14 @@ describe "model syncing", ->
         should.exist res
         synced = true
       mod.destroy (err, res) ->
-        should.not.exist err
-        should.exist res
-        res.status.should.equal 200
-        mod.get("test").should.equal "hello"
-        syncing.should.equal true
-        synced.should.equal true
-        done()
+        process.nextTick ->
+          should.not.exist err
+          should.exist res
+          res.status.should.equal 200
+          mod.get("test").should.equal "hello"
+          syncing.should.equal true
+          synced.should.equal true
+          done()
 
     it "should work with single url", (done) ->
       class TestModel extends dermis.Model
@@ -292,13 +302,14 @@ describe "model syncing", ->
         syncing = true
       mod.on "destroyed", -> synced = true
       mod.destroy (err, res) ->
-        should.not.exist err
-        should.exist res
-        res.status.should.equal 200
-        mod.get("test").should.equal "hello"
-        syncing.should.equal true
-        synced.should.equal true
-        done()
+        process.nextTick ->
+          should.not.exist err
+          should.exist res
+          res.status.should.equal 200
+          mod.get("test").should.equal "hello"
+          syncing.should.equal true
+          synced.should.equal true
+          done()
 
 describe "collection syncing", ->
   describe "fetch", ->
@@ -317,14 +328,15 @@ describe "collection syncing", ->
         should.exist res
         synced = true
       mod.fetch (err, res) ->
-        should.not.exist err
-        should.exist res
-        res.status.should.equal 200
-        mod.at(0).test.should.equal "hello"
-        mod.at(1).test.should.equal "world"
-        syncing.should.equal true
-        synced.should.equal true
-        done()
+        process.nextTick ->
+          should.not.exist err
+          should.exist res
+          res.status.should.equal 200
+          mod.at(0).test.should.equal "hello"
+          mod.at(1).test.should.equal "world"
+          syncing.should.equal true
+          synced.should.equal true
+          done()
 
     it "should work with single url", (done) ->
       class TestSet extends dermis.Collection
@@ -340,11 +352,12 @@ describe "collection syncing", ->
         should.exist res
         synced = true
       mod.fetch (err, res) ->
-        should.not.exist err
-        should.exist res
-        res.status.should.equal 200
-        mod.at(0).test.should.equal "hello"
-        mod.at(1).test.should.equal "world"
-        syncing.should.equal true
-        synced.should.equal true
-        done()
+        process.nextTick ->
+          should.not.exist err
+          should.exist res
+          res.status.should.equal 200
+          mod.at(0).test.should.equal "hello"
+          mod.at(1).test.should.equal "world"
+          syncing.should.equal true
+          synced.should.equal true
+          done()

@@ -1,5 +1,12 @@
 ;(function(){
 
+
+/**
+ * hasOwnProperty.
+ */
+
+var has = Object.prototype.hasOwnProperty;
+
 /**
  * Require the given path.
  *
@@ -76,10 +83,10 @@ require.resolve = function(path) {
 
   for (var i = 0; i < paths.length; i++) {
     var path = paths[i];
-    if (require.modules.hasOwnProperty(path)) return path;
+    if (has.call(require.modules, path)) return path;
   }
 
-  if (require.aliases.hasOwnProperty(index)) {
+  if (has.call(require.aliases, index)) {
     return require.aliases[index];
   }
 };
@@ -133,7 +140,7 @@ require.register = function(path, definition) {
  */
 
 require.alias = function(from, to) {
-  if (!require.modules.hasOwnProperty(from)) {
+  if (!has.call(require.modules, from)) {
     throw new Error('Failed to alias "' + from + '", it does not exist');
   }
   require.aliases[to] = from;
@@ -195,7 +202,7 @@ require.relative = function(parent) {
    */
 
   localRequire.exists = function(path) {
-    return require.modules.hasOwnProperty(localRequire.resolve(path));
+    return has.call(require.modules, localRequire.resolve(path));
   };
 
   return localRequire;
@@ -414,13 +421,13 @@ function guid (prefix) {
 };
 
 });
-require.register("mikeric-rivets/dist/rivets.js", function(exports, require, module){
-// Rivets.js
-// version: 0.5.2
+require.register("mikeric-rivets/lib/rivets.js", function(exports, require, module){
+// rivets.js
+// version: 0.4.5
 // author: Michael Richards
 // license: MIT
 (function() {
-  var Rivets,
+  var Rivets, bindEvent, getInputValue, rivets, unbindEvent,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __slice = [].slice,
     __indexOf = [].indexOf || function(item) { for (var i = 0, l = this.length; i < l; i++) { if (i in this && this[i] === item) return i; } return -1; };
@@ -434,24 +441,28 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
   }
 
   Rivets.Binding = (function() {
-    function Binding(view, el, type, key, keypath, options) {
-      var identifier, regexp, value, _ref;
 
-      this.view = view;
+    function Binding(el, type, model, keypath, options) {
+      var identifier, regexp, value, _ref;
       this.el = el;
       this.type = type;
-      this.key = key;
+      this.model = model;
       this.keypath = keypath;
       this.options = options != null ? options : {};
-      this.update = __bind(this.update, this);
       this.unbind = __bind(this.unbind, this);
+
       this.bind = __bind(this.bind, this);
+
       this.publish = __bind(this.publish, this);
+
       this.sync = __bind(this.sync, this);
+
       this.set = __bind(this.set, this);
+
       this.formattedValue = __bind(this.formattedValue, this);
-      if (!(this.binder = this.view.binders[type])) {
-        _ref = this.view.binders;
+
+      if (!(this.binder = Rivets.binders[type])) {
+        _ref = Rivets.binders;
         for (identifier in _ref) {
           value = _ref[identifier];
           if (identifier !== '*' && identifier.indexOf('*') !== -1) {
@@ -464,25 +475,23 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
           }
         }
       }
-      this.binder || (this.binder = this.view.binders['*']);
+      this.binder || (this.binder = Rivets.binders['*']);
       if (this.binder instanceof Function) {
         this.binder = {
           routine: this.binder
         };
       }
       this.formatters = this.options.formatters || [];
-      this.model = this.view.models[this.key];
     }
 
     Binding.prototype.formattedValue = function(value) {
       var args, formatter, id, _i, _len, _ref;
-
       _ref = this.formatters;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         formatter = _ref[_i];
         args = formatter.split(/\s+/);
         id = args.shift();
-        formatter = this.model[id] instanceof Function ? this.model[id] : this.view.formatters[id];
+        formatter = this.model[id] instanceof Function ? this.model[id] : Rivets.formatters[id];
         if ((formatter != null ? formatter.read : void 0) instanceof Function) {
           value = formatter.read.apply(formatter, [value].concat(__slice.call(args)));
         } else if (formatter instanceof Function) {
@@ -494,42 +503,39 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
 
     Binding.prototype.set = function(value) {
       var _ref;
-
       value = value instanceof Function && !this.binder["function"] ? this.formattedValue(value.call(this.model)) : this.formattedValue(value);
       return (_ref = this.binder.routine) != null ? _ref.call(this, this.el, value) : void 0;
     };
 
     Binding.prototype.sync = function() {
-      return this.set(this.options.bypass ? this.model[this.keypath] : this.view.config.adapter.read(this.model, this.keypath));
+      return this.set(this.options.bypass ? this.model[this.keypath] : Rivets.config.adapter.read(this.model, this.keypath));
     };
 
     Binding.prototype.publish = function() {
       var args, formatter, id, value, _i, _len, _ref, _ref1, _ref2;
-
-      value = Rivets.Util.getInputValue(this.el);
+      value = getInputValue(this.el);
       _ref = this.formatters.slice(0).reverse();
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
         formatter = _ref[_i];
         args = formatter.split(/\s+/);
         id = args.shift();
-        if ((_ref1 = this.view.formatters[id]) != null ? _ref1.publish : void 0) {
-          value = (_ref2 = this.view.formatters[id]).publish.apply(_ref2, [value].concat(__slice.call(args)));
+        if ((_ref1 = Rivets.formatters[id]) != null ? _ref1.publish : void 0) {
+          value = (_ref2 = Rivets.formatters[id]).publish.apply(_ref2, [value].concat(__slice.call(args)));
         }
       }
-      return this.view.config.adapter.publish(this.model, this.keypath, value);
+      return Rivets.config.adapter.publish(this.model, this.keypath, value);
     };
 
     Binding.prototype.bind = function() {
       var dependency, keypath, model, _i, _len, _ref, _ref1, _ref2, _results;
-
       if ((_ref = this.binder.bind) != null) {
         _ref.call(this, this.el);
       }
       if (this.options.bypass) {
         this.sync();
       } else {
-        this.view.config.adapter.subscribe(this.model, this.keypath, this.sync);
-        if (this.view.config.preloadData) {
+        Rivets.config.adapter.subscribe(this.model, this.keypath, this.sync);
+        if (Rivets.config.preloadData) {
           this.sync();
         }
       }
@@ -546,7 +552,7 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
             model = this.view.models[dependency.shift()];
             keypath = dependency.join('.');
           }
-          _results.push(this.view.config.adapter.subscribe(model, keypath, this.sync));
+          _results.push(Rivets.config.adapter.subscribe(model, keypath, this.sync));
         }
         return _results;
       }
@@ -554,12 +560,11 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
 
     Binding.prototype.unbind = function() {
       var dependency, keypath, model, _i, _len, _ref, _ref1, _ref2, _results;
-
       if ((_ref = this.binder.unbind) != null) {
         _ref.call(this, this.el);
       }
       if (!this.options.bypass) {
-        this.view.config.adapter.unsubscribe(this.model, this.keypath, this.sync);
+        Rivets.config.adapter.unsubscribe(this.model, this.keypath, this.sync);
       }
       if ((_ref1 = this.options.dependencies) != null ? _ref1.length : void 0) {
         _ref2 = this.options.dependencies;
@@ -574,16 +579,10 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
             model = this.view.models[dependency.shift()];
             keypath = dependency.join('.');
           }
-          _results.push(this.view.config.adapter.unsubscribe(model, keypath, this.sync));
+          _results.push(Rivets.config.adapter.unsubscribe(model, keypath, this.sync));
         }
         return _results;
       }
-    };
-
-    Binding.prototype.update = function() {
-      this.unbind();
-      this.model = this.view.models[this.key];
-      return this.bind();
     };
 
     return Binding;
@@ -591,49 +590,33 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
   })();
 
   Rivets.View = (function() {
-    function View(els, models, options) {
-      var k, option, v, _base, _i, _len, _ref, _ref1, _ref2, _ref3;
 
+    function View(els, models) {
       this.els = els;
       this.models = models;
-      this.options = options != null ? options : {};
-      this.update = __bind(this.update, this);
       this.publish = __bind(this.publish, this);
+
       this.sync = __bind(this.sync, this);
+
       this.unbind = __bind(this.unbind, this);
+
       this.bind = __bind(this.bind, this);
+
       this.select = __bind(this.select, this);
+
       this.build = __bind(this.build, this);
+
       this.bindingRegExp = __bind(this.bindingRegExp, this);
+
       if (!(this.els.jquery || this.els instanceof Array)) {
         this.els = [this.els];
-      }
-      _ref = ['config', 'binders', 'formatters'];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        option = _ref[_i];
-        this[option] = {};
-        if (this.options[option]) {
-          _ref1 = this.options[option];
-          for (k in _ref1) {
-            v = _ref1[k];
-            this[option][k] = v;
-          }
-        }
-        _ref2 = Rivets[option];
-        for (k in _ref2) {
-          v = _ref2[k];
-          if ((_ref3 = (_base = this[option])[k]) == null) {
-            _base[k] = v;
-          }
-        }
       }
       this.build();
     }
 
     View.prototype.bindingRegExp = function() {
       var prefix;
-
-      prefix = this.config.prefix;
+      prefix = Rivets.config.prefix;
       if (prefix) {
         return new RegExp("^data-" + prefix + "-");
       } else {
@@ -644,21 +627,19 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
     View.prototype.build = function() {
       var bindingRegExp, el, node, parse, skipNodes, _i, _j, _len, _len1, _ref, _ref1,
         _this = this;
-
       this.bindings = [];
       skipNodes = [];
       bindingRegExp = this.bindingRegExp();
       parse = function(node) {
-        var attribute, attributes, binder, context, ctx, dependencies, identifier, key, keypath, n, options, path, pipe, pipes, regexp, splitPath, type, value, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
-
+        var attribute, attributes, binder, binding, context, ctx, dependencies, identifier, keypath, model, n, options, path, pipe, pipes, regexp, splitPath, type, value, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3;
         if (__indexOf.call(skipNodes, node) < 0) {
           _ref = node.attributes;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
             attribute = _ref[_i];
             if (bindingRegExp.test(attribute.name)) {
               type = attribute.name.replace(bindingRegExp, '');
-              if (!(binder = _this.binders[type])) {
-                _ref1 = _this.binders;
+              if (!(binder = Rivets.binders[type])) {
+                _ref1 = Rivets.binders;
                 for (identifier in _ref1) {
                   value = _ref1[identifier];
                   if (identifier !== '*' && identifier.indexOf('*') !== -1) {
@@ -669,7 +650,7 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
                   }
                 }
               }
-              binder || (binder = _this.binders['*']);
+              binder || (binder = Rivets.binders['*']);
               if (binder.block) {
                 _ref2 = node.getElementsByTagName('*');
                 for (_j = 0, _len1 = _ref2.length; _j < _len1; _j++) {
@@ -688,7 +669,6 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
               type = attribute.name.replace(bindingRegExp, '');
               pipes = (function() {
                 var _l, _len3, _ref4, _results;
-
                 _ref4 = attribute.value.split('|');
                 _results = [];
                 for (_l = 0, _len3 = _ref4.length; _l < _len3; _l++) {
@@ -699,7 +679,6 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
               })();
               context = (function() {
                 var _l, _len3, _ref4, _results;
-
                 _ref4 = pipes.shift().split('<');
                 _results = [];
                 for (_l = 0, _len3 = _ref4.length; _l < _len3; _l++) {
@@ -713,17 +692,19 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
               options.formatters = pipes;
               options.bypass = path.indexOf(':') !== -1;
               if (splitPath[0]) {
-                key = splitPath.shift();
+                model = _this.models[splitPath.shift()];
               } else {
-                key = null;
+                model = _this.models;
                 splitPath.shift();
               }
               keypath = splitPath.join('.');
-              if (_this.models[key] != null) {
+              if (model) {
                 if (dependencies = context.shift()) {
                   options.dependencies = dependencies.split(/\s+/);
                 }
-                _this.bindings.push(new Rivets.Binding(_this, node, type, key, keypath, options));
+                binding = new Rivets.Binding(node, type, model, keypath, options);
+                binding.view = _this;
+                _this.bindings.push(binding);
               }
             }
           }
@@ -748,7 +729,6 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
 
     View.prototype.select = function(fn) {
       var binding, _i, _len, _ref, _results;
-
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -762,7 +742,6 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
 
     View.prototype.bind = function() {
       var binding, _i, _len, _ref, _results;
-
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -774,7 +753,6 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
 
     View.prototype.unbind = function() {
       var binding, _i, _len, _ref, _results;
-
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -786,7 +764,6 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
 
     View.prototype.sync = function() {
       var binding, _i, _len, _ref, _results;
-
       _ref = this.bindings;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -798,7 +775,6 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
 
     View.prototype.publish = function() {
       var binding, _i, _len, _ref, _results;
-
       _ref = this.select(function(b) {
         return b.binder.publishes;
       });
@@ -810,103 +786,64 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
       return _results;
     };
 
-    View.prototype.update = function(models) {
-      var binding, key, model, _results;
-
-      if (models == null) {
-        models = {};
-      }
-      _results = [];
-      for (key in models) {
-        model = models[key];
-        this.models[key] = model;
-        _results.push((function() {
-          var _i, _len, _ref, _results1;
-
-          _ref = this.select(function(b) {
-            return b.key === key;
-          });
-          _results1 = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            binding = _ref[_i];
-            _results1.push(binding.update());
-          }
-          return _results1;
-        }).call(this));
-      }
-      return _results;
-    };
-
     return View;
 
   })();
 
-  Rivets.Util = {
-    bindEvent: function(el, event, handler, view) {
-      var fn;
+  bindEvent = function(el, event, handler, context) {
+    var fn;
+    fn = function(e) {
+      return handler.call(context, e);
+    };
+    if (window.jQuery != null) {
+      el = jQuery(el);
+      if (el.on != null) {
+        el.on(event, fn);
+      } else {
+        el.bind(event, fn);
+      }
+    } else if (window.addEventListener != null) {
+      el.addEventListener(event, fn, false);
+    } else {
+      event = 'on' + event;
+      el.attachEvent(event, fn);
+    }
+    return fn;
+  };
 
-      fn = function(ev) {
-        return handler.call(this, ev, view);
-      };
-      if (window.jQuery != null) {
-        el = jQuery(el);
-        if (el.on != null) {
-          el.on(event, fn);
-        } else {
-          el.bind(event, fn);
-        }
-      } else if (window.addEventListener != null) {
-        el.addEventListener(event, fn, false);
+  unbindEvent = function(el, event, fn) {
+    if (window.jQuery != null) {
+      el = jQuery(el);
+      if (el.off != null) {
+        return el.off(event, fn);
       } else {
-        event = 'on' + event;
-        el.attachEvent(event, fn);
+        return el.unbind(event, fn);
       }
-      return fn;
-    },
-    unbindEvent: function(el, event, fn) {
-      if (window.jQuery != null) {
-        el = jQuery(el);
-        if (el.off != null) {
-          return el.off(event, fn);
-        } else {
-          return el.unbind(event, fn);
-        }
-      } else if (window.removeEventListener) {
-        return el.removeEventListener(event, fn, false);
-      } else {
-        event = 'on' + event;
-        return el.detachEvent(event, fn);
-      }
-    },
-    getInputValue: function(el) {
-      var o, _i, _len, _results;
+    } else if (window.removeEventListener) {
+      return el.removeEventListener(event, fn, false);
+    } else {
+      event = 'on' + event;
+      return el.detachEvent(event, fn);
+    }
+  };
 
-      if (window.jQuery != null) {
-        el = jQuery(el);
-        switch (el[0].type) {
-          case 'checkbox':
-            return el.is(':checked');
-          default:
-            return el.val();
+  getInputValue = function(el) {
+    var o, _i, _len, _results;
+    switch (el.type) {
+      case 'checkbox':
+        return el.checked;
+      case 'select-multiple':
+        _results = [];
+        for (_i = 0, _len = el.length; _i < _len; _i++) {
+          o = el[_i];
+          if (o.selected) {
+            _results.push(o.value);
+          }
         }
-      } else {
-        switch (el.type) {
-          case 'checkbox':
-            return el.checked;
-          case 'select-multiple':
-            _results = [];
-            for (_i = 0, _len = el.length; _i < _len; _i++) {
-              o = el[_i];
-              if (o.selected) {
-                _results.push(o.value);
-              }
-            }
-            return _results;
-            break;
-          default:
-            return el.value;
-        }
-      }
+        return _results;
+        break;
+      default:
+        return el.value;
     }
   };
 
@@ -920,16 +857,14 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
     checked: {
       publishes: true,
       bind: function(el) {
-        return this.currentListener = Rivets.Util.bindEvent(el, 'change', this.publish);
+        return this.currentListener = bindEvent(el, 'change', this.publish);
       },
       unbind: function(el) {
-        return Rivets.Util.unbindEvent(el, 'change', this.currentListener);
+        return unbindEvent(el, 'change', this.currentListener);
       },
       routine: function(el, value) {
-        var _ref;
-
         if (el.type === 'radio') {
-          return el.checked = ((_ref = el.value) != null ? _ref.toString() : void 0) === (value != null ? value.toString() : void 0);
+          return el.checked = el.value === value;
         } else {
           return el.checked = !!value;
         }
@@ -938,16 +873,14 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
     unchecked: {
       publishes: true,
       bind: function(el) {
-        return this.currentListener = Rivets.Util.bindEvent(el, 'change', this.publish);
+        return this.currentListener = bindEvent(el, 'change', this.publish);
       },
       unbind: function(el) {
-        return Rivets.Util.unbindEvent(el, 'change', this.currentListener);
+        return unbindEvent(el, 'change', this.currentListener);
       },
       routine: function(el, value) {
-        var _ref;
-
         if (el.type === 'radio') {
-          return el.checked = ((_ref = el.value) != null ? _ref.toString() : void 0) !== (value != null ? value.toString() : void 0);
+          return el.checked = el.value !== value;
         } else {
           return el.checked = !value;
         }
@@ -965,32 +898,24 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
     value: {
       publishes: true,
       bind: function(el) {
-        return this.currentListener = Rivets.Util.bindEvent(el, 'change', this.publish);
+        return this.currentListener = bindEvent(el, 'change', this.publish);
       },
       unbind: function(el) {
-        return Rivets.Util.unbindEvent(el, 'change', this.currentListener);
+        return unbindEvent(el, 'change', this.currentListener);
       },
       routine: function(el, value) {
-        var o, _i, _len, _ref, _ref1, _ref2, _results;
-
-        if (window.jQuery != null) {
-          el = jQuery(el);
-          if ((value != null ? value.toString() : void 0) !== ((_ref = el.val()) != null ? _ref.toString() : void 0)) {
-            return el.val(value != null ? value : '');
+        var o, _i, _len, _ref, _results;
+        if (el.type === 'select-multiple') {
+          if (value != null) {
+            _results = [];
+            for (_i = 0, _len = el.length; _i < _len; _i++) {
+              o = el[_i];
+              _results.push(o.selected = (_ref = o.value, __indexOf.call(value, _ref) >= 0));
+            }
+            return _results;
           }
         } else {
-          if (el.type === 'select-multiple') {
-            if (value != null) {
-              _results = [];
-              for (_i = 0, _len = el.length; _i < _len; _i++) {
-                o = el[_i];
-                _results.push(o.selected = (_ref1 = o.value, __indexOf.call(value, _ref1) >= 0));
-              }
-              return _results;
-            }
-          } else if ((value != null ? value.toString() : void 0) !== ((_ref2 = el.value) != null ? _ref2.toString() : void 0)) {
-            return el.value = value != null ? value : '';
-          }
+          return el.value = value != null ? value : '';
         }
       }
     },
@@ -1005,32 +930,18 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
       "function": true,
       routine: function(el, value) {
         if (this.currentListener) {
-          Rivets.Util.unbindEvent(el, this.args[0], this.currentListener);
+          unbindEvent(el, this.args[0], this.currentListener);
         }
-        return this.currentListener = Rivets.Util.bindEvent(el, this.args[0], value, this.view);
+        return this.currentListener = bindEvent(el, this.args[0], value, this.model);
       }
     },
     "each-*": {
       block: true,
       bind: function(el, collection) {
-        return el.removeAttribute(['data', this.view.config.prefix, this.type].join('-').replace('--', '-'));
-      },
-      unbind: function(el, collection) {
-        var view, _i, _len, _ref, _results;
-
-        if (this.iterated != null) {
-          _ref = this.iterated;
-          _results = [];
-          for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-            view = _ref[_i];
-            _results.push(view.unbind());
-          }
-          return _results;
-        }
+        return el.removeAttribute(['data', rivets.config.prefix, this.type].join('-').replace('--', '-'));
       },
       routine: function(el, collection) {
-        var data, e, item, itemEl, k, m, n, options, previous, v, view, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _ref4, _results;
-
+        var data, e, item, itemEl, m, n, previous, view, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2, _ref3, _results;
         if (this.iterated != null) {
           _ref = this.iterated;
           for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -1060,24 +971,13 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
             }
             data[this.args[0]] = item;
             itemEl = el.cloneNode(true);
-            previous = this.iterated.length ? this.iterated[this.iterated.length - 1].els[0] : this.marker;
-            this.marker.parentNode.insertBefore(itemEl, (_ref3 = previous.nextSibling) != null ? _ref3 : null);
-            options = {
-              binders: this.view.options.binders,
-              formatters: this.view.options.binders,
-              config: {}
-            };
-            if (this.view.options.config) {
-              _ref4 = this.view.options.config;
-              for (k in _ref4) {
-                v = _ref4[k];
-                options.config[k] = v;
-              }
+            if (this.iterated.length > 0) {
+              previous = this.iterated[this.iterated.length - 1].els[0];
+            } else {
+              previous = this.marker;
             }
-            options.config.preloadData = true;
-            view = new Rivets.View(itemEl, data, options);
-            view.bind();
-            _results.push(this.iterated.push(view));
+            this.marker.parentNode.insertBefore(itemEl, (_ref3 = previous.nextSibling) != null ? _ref3 : null);
+            _results.push(this.iterated.push(rivets.bind(itemEl, data)));
           }
           return _results;
         }
@@ -1085,7 +985,6 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
     },
     "class-*": function(el, value) {
       var elClass;
-
       elClass = " " + el.className + " ";
       if (!value === (elClass.indexOf(" " + this.args[0] + " ") !== -1)) {
         return el.className = value ? "" + el.className + " " + this.args[0] : elClass.replace(" " + this.args[0] + " ", ' ').trim();
@@ -1106,13 +1005,12 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
 
   Rivets.formatters = {};
 
-  Rivets.factory = function(exports) {
-    exports.binders = Rivets.binders;
-    exports.formatters = Rivets.formatters;
-    exports.config = Rivets.config;
-    exports.configure = function(options) {
+  rivets = {
+    binders: Rivets.binders,
+    formatters: Rivets.formatters,
+    config: Rivets.config,
+    configure: function(options) {
       var property, value;
-
       if (options == null) {
         options = {};
       }
@@ -1120,31 +1018,22 @@ require.register("mikeric-rivets/dist/rivets.js", function(exports, require, mod
         value = options[property];
         Rivets.config[property] = value;
       }
-    };
-    return exports.bind = function(el, models, options) {
+    },
+    bind: function(el, models) {
       var view;
-
       if (models == null) {
         models = {};
       }
-      if (options == null) {
-        options = {};
-      }
-      view = new Rivets.View(el, models, options);
+      view = new Rivets.View(el, models);
       view.bind();
       return view;
-    };
+    }
   };
 
-  if (typeof exports === 'object') {
-    Rivets.factory(exports);
-  } else if (typeof define === 'function' && define.amd) {
-    define(['exports'], function(exports) {
-      Rivets.factory(this.rivets = exports);
-      return exports;
-    });
+  if (typeof module !== "undefined" && module !== null) {
+    module.exports = rivets;
   } else {
-    Rivets.factory(this.rivets = {});
+    this.rivets = rivets;
   }
 
 }).call(this);
@@ -1644,8 +1533,8 @@ require.register("visionmedia-superagent/lib/client.js", function(exports, requi
  * Module dependencies.
  */
 
-var Emitter = require('emitter');
-var reduce = require('reduce');
+var Emitter = require('emitter')
+  , reduce = require('reduce');
 
 /**
  * Root reference for iframes.
@@ -1660,30 +1549,6 @@ var root = 'undefined' == typeof window
  */
 
 function noop(){};
-
-/**
- * Check if `obj` is a host object,
- * we don't want to serialize these :)
- *
- * TODO: future proof, move to compoent land
- *
- * @param {Object} obj
- * @return {Boolean}
- * @api private
- */
-
-function isHost(obj) {
-  var str = {}.toString.call(obj);
-
-  switch (str) {
-    case '[object File]':
-    case '[object Blob]':
-    case '[object FormData]':
-      return true;
-    default:
-      return false;
-  }
-}
 
 /**
  * Determine XHR.
@@ -2207,21 +2072,6 @@ Request.prototype.type = function(type){
 };
 
 /**
- * Set Authorization field value with `user` and `pass`.
- *
- * @param {String} user
- * @param {String} pass
- * @return {Request} for chaining
- * @api public
- */
-
-Request.prototype.auth = function(user, pass){
-  var str = btoa(user + ':' + pass);
-  this.set('Authorization', 'Basic ' + str);
-  return this;
-};
-
-/**
 * Add query-string `val`.
 *
 * Examples:
@@ -2436,7 +2286,7 @@ Request.prototype.end = function(fn){
   xhr.open(this.method, this.url, true);
 
   // body
-  if ('GET' != this.method && 'HEAD' != this.method && 'string' != typeof data && !isHost(data)) {
+  if ('GET' != this.method && 'HEAD' != this.method && 'string' != typeof data) {
     // serialize stuff
     var serialize = request.serialize[this.getHeader('Content-Type')];
     if (serialize) data = serialize(data);
@@ -2842,12 +2692,13 @@ module.exports = function(e){
 
 });
 require.register("dermis/dist/delegate.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
 var Delegate, splitEvents;
 
 splitEvents = require('event-splitter');
 
 Delegate = (function() {
+
   Delegate.prototype._binds = [];
 
   function Delegate(root, events, context) {
@@ -2875,7 +2726,6 @@ Delegate = (function() {
 
   Delegate.prototype.bind = function() {
     var evhandler, handler, name, selector, str, _ref, _ref1;
-
     _ref = this.events;
     for (str in _ref) {
       handler = _ref[str];
@@ -2894,7 +2744,6 @@ Delegate = (function() {
 
   Delegate.prototype.unbind = function() {
     var z, _i, _len, _ref;
-
     _ref = this._binds;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       z = _ref[_i];
@@ -2912,10 +2761,10 @@ module.exports = Delegate;
 
 });
 require.register("dermis/dist/makeElement.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
+
 module.exports = function(tagName, attributes, content) {
   var el;
-
   el = document.createElement(tagName);
   if (attributes) {
     $(el).attr(attributes);
@@ -2928,7 +2777,7 @@ module.exports = function(tagName, attributes, content) {
 
 });
 require.register("dermis/dist/rivetsConfig.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
 var cfg, k, prevent, publishers, v, _ref,
   __slice = [].slice;
 
@@ -2990,13 +2839,11 @@ cfg = {
     },
     prepend: function() {
       var a, v;
-
       v = arguments[0], a = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
       return a.join(' ') + v;
     },
     append: function() {
       var a, v;
-
       v = arguments[0], a = 2 <= arguments.length ? __slice.call(arguments, 1) : [];
       return v + a.join(' ');
     },
@@ -3070,7 +2917,7 @@ module.exports = cfg;
 
 });
 require.register("dermis/dist/syncAdapter.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
 var methods, request, util;
 
 request = require('superagent');
@@ -3087,7 +2934,6 @@ methods = {
 
 module.exports = function(method, mod, opt, cb) {
   var req, url, urls, verb, _ref;
-
   if (opt == null) {
     opt = {};
   }
@@ -3132,7 +2978,8 @@ module.exports = function(method, mod, opt, cb) {
 
 });
 require.register("dermis/dist/util.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
+
 module.exports = {
   result: function(v, scope) {
     if (typeof v === "function") {
@@ -3147,17 +2994,15 @@ module.exports = {
 
 });
 require.register("dermis/dist/toJSON.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
 var toJSON,
   __hasProp = {}.hasOwnProperty;
 
 module.exports = toJSON = function(val) {
   var i, k, out, v;
-
   if (Array.isArray(val)) {
     return (function() {
       var _i, _len, _results;
-
       _results = [];
       for (_i = 0, _len = val.length; _i < _len; _i++) {
         i = val[_i];
@@ -3181,7 +3026,7 @@ module.exports = toJSON = function(val) {
 
 });
 require.register("dermis/dist/modelAdapter.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
 var adapter;
 
 module.exports = adapter = {
@@ -3224,7 +3069,7 @@ module.exports = adapter = {
 
 });
 require.register("dermis/dist/Model.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
 var Emitter, Model, adapter, mpath, rivets, syncAdapter, toJSON,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -3242,6 +3087,7 @@ adapter = require('./modelAdapter');
 toJSON = require('./toJSON');
 
 Model = (function(_super) {
+
   __extends(Model, _super);
 
   Model._isModel = true;
@@ -3262,7 +3108,6 @@ Model = (function(_super) {
 
   function Model(o) {
     var _ref, _ref1;
-
     this._props = {};
     if ((_ref = this.casts) == null) {
       this.casts = {};
@@ -3283,7 +3128,6 @@ Model = (function(_super) {
 
   Model.prototype.get = function(k) {
     var _ref;
-
     if ((_ref = this.accessors[k]) != null ? _ref.get : void 0) {
       return this.accessors[k].get();
     }
@@ -3292,7 +3136,6 @@ Model = (function(_super) {
 
   Model.prototype.set = function(k, v, silent) {
     var castModel, ky, vy, _ref;
-
     if (k == null) {
       return;
     }
@@ -3327,7 +3170,6 @@ Model = (function(_super) {
 
   Model.prototype.clear = function(silent) {
     var k, v, _ref;
-
     _ref = this._props;
     for (k in _ref) {
       if (!__hasProp.call(_ref, k)) continue;
@@ -3358,7 +3200,6 @@ Model = (function(_super) {
 
   Model.prototype.fetch = function(opt, cb) {
     var _this = this;
-
     if (typeof opt === 'function' && !cb) {
       cb = opt;
       opt = {};
@@ -3389,7 +3230,6 @@ Model = (function(_super) {
 
   Model.prototype.save = function(opt, cb) {
     var _this = this;
-
     if (typeof opt === 'function' && !cb) {
       cb = opt;
       opt = {};
@@ -3413,7 +3253,6 @@ Model = (function(_super) {
 
   Model.prototype.create = function(opt, cb) {
     var _this = this;
-
     if (typeof opt === 'function' && !cb) {
       cb = opt;
       opt = {};
@@ -3437,7 +3276,6 @@ Model = (function(_super) {
 
   Model.prototype.destroy = function(opt, cb) {
     var _this = this;
-
     if (typeof opt === 'function' && !cb) {
       cb = opt;
       opt = {};
@@ -3454,7 +3292,7 @@ Model = (function(_super) {
       if (cb) {
         cb(err, res);
       }
-      return _this.emit("created", res);
+      return _this.emit("destroyed", res);
     });
     return this;
   };
@@ -3481,7 +3319,7 @@ module.exports = Model;
 
 });
 require.register("dermis/dist/Collection.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
 var Collection, Emitter, Model, rivets, rivetsConfig,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -3495,6 +3333,7 @@ rivetsConfig = require('./rivetsConfig');
 Model = require('./Model');
 
 Collection = (function(_super) {
+
   __extends(Collection, _super);
 
   Collection._isCollection = true;
@@ -3515,7 +3354,6 @@ Collection = (function(_super) {
 
   Collection.prototype.add = function(o, silent) {
     var i, mod, _i, _len;
-
     if (Array.isArray(o)) {
       for (_i = 0, _len = o.length; _i < _len; _i++) {
         i = o[_i];
@@ -3534,7 +3372,6 @@ Collection = (function(_super) {
 
   Collection.prototype.remove = function(o, silent) {
     var i, idx, _i, _len;
-
     if (Array.isArray(o)) {
       for (_i = 0, _len = o.length; _i < _len; _i++) {
         i = o[_i];
@@ -3559,7 +3396,6 @@ Collection = (function(_super) {
 
   Collection.prototype.replace = function(o, nu, silent) {
     var idx;
-
     idx = this.indexOf(o);
     if (idx !== -1) {
       this.replaceAt(idx, nu, silent);
@@ -3569,7 +3405,6 @@ Collection = (function(_super) {
 
   Collection.prototype.replaceAt = function(idx, nu, silent) {
     var mods;
-
     mods = this.get('models');
     mods[idx] = this._processModel(nu);
     this.set('models', mods, silent);
@@ -3629,7 +3464,6 @@ Collection = (function(_super) {
   Collection.prototype.where = function(obj, raw) {
     return this.filter(function(item) {
       var k, v;
-
       for (k in obj) {
         if (!__hasProp.call(obj, k)) continue;
         v = obj[k];
@@ -3663,7 +3497,6 @@ Collection = (function(_super) {
 
   Collection.prototype.fetch = function(opt, cb) {
     var _this = this;
-
     if (typeof opt === 'function' && !cb) {
       cb = opt;
       opt = {};
@@ -3691,7 +3524,6 @@ Collection = (function(_super) {
 
   Collection.prototype._processModel = function(o) {
     var mod;
-
     if (this.model && !(o instanceof Model)) {
       mod = new this.model(o);
     } else {
@@ -3708,7 +3540,7 @@ module.exports = Collection;
 
 });
 require.register("dermis/dist/View.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
 var Delegate, Emitter, View, extend, guid, makeElement, rivets, util,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
@@ -3728,6 +3560,7 @@ util = require('./util');
 rivets = require('rivets');
 
 View = (function(_super) {
+
   __extends(View, _super);
 
   function View(opt) {
@@ -3811,7 +3644,6 @@ View = (function(_super) {
 
   View.prototype._ensureElement = function() {
     var attr, virt;
-
     if (this.el) {
       this.setElement(util.result(this.el), false);
     } else {
@@ -3836,9 +3668,9 @@ module.exports = View;
 
 });
 require.register("dermis/dist/Layout.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
 var Emitter, Layout, Region, View, util,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+  _this = this,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
@@ -3851,12 +3683,15 @@ Region = require('./Region');
 util = require('./util');
 
 Layout = (function(_super) {
+
   __extends(Layout, _super);
 
   function Layout() {
-    this.addRegion = __bind(this.addRegion, this);
-    var _ref, _ref1;
-
+    var _ref, _ref1,
+      _this = this;
+    this.addRegion = function(name) {
+      return Layout.prototype.addRegion.apply(_this, arguments);
+    };
     this._regions = {};
     if ((_ref = this.regions) == null) {
       this.regions = {};
@@ -3877,7 +3712,6 @@ Layout = (function(_super) {
 
   Layout.prototype.render = function() {
     var name, select, v, _ref, _ref1;
-
     Layout.__super__.render.apply(this, arguments);
     _ref = this.regions;
     for (name in _ref) {
@@ -3902,9 +3736,9 @@ module.exports = Layout;
 
 });
 require.register("dermis/dist/Region.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
-var Emitter, Region, _ref,
-  __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+// Generated by CoffeeScript 1.6.1
+var Emitter, Region,
+  _this = this,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   __slice = [].slice;
@@ -3912,13 +3746,23 @@ var Emitter, Region, _ref,
 Emitter = require('emitter');
 
 Region = (function(_super) {
+
   __extends(Region, _super);
 
   function Region() {
-    this.clear = __bind(this.clear, this);
-    this.set = __bind(this.set, this);
-    this.show = __bind(this.show, this);    _ref = Region.__super__.constructor.apply(this, arguments);
-    return _ref;
+    var _this = this;
+    this.clear = function() {
+      return Region.prototype.clear.apply(_this, arguments);
+    };
+    this.set = function(nu) {
+      return Region.prototype.set.apply(_this, arguments);
+    };
+    this.show = function() {
+      var a;
+      a = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
+      return Region.prototype.show.apply(_this, arguments);
+    };
+    return Region.__super__.constructor.apply(this, arguments);
   }
 
   Region.prototype.view = null;
@@ -3926,13 +3770,12 @@ Region = (function(_super) {
   Region.prototype.$el = null;
 
   Region.prototype.show = function() {
-    var a, _ref1;
-
+    var a, _ref;
     a = 1 <= arguments.length ? __slice.call(arguments, 0) : [];
     if (this.view) {
       this.clear();
       this.view.setElement(this.view.el);
-      this.$el.html((_ref1 = this.view).render.apply(_ref1, a).el);
+      this.$el.html((_ref = this.view).render.apply(_ref, a).el);
       this.emit("show");
     }
     return this;
@@ -3960,8 +3803,8 @@ module.exports = Region;
 
 });
 require.register("dermis/dist/Router.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
-var Emitter, Router, page, _ref,
+// Generated by CoffeeScript 1.6.1
+var Emitter, Router, page,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; },
   __slice = [].slice;
@@ -3971,16 +3814,15 @@ Emitter = require('emitter');
 page = require('page');
 
 Router = (function(_super) {
+
   __extends(Router, _super);
 
   function Router() {
-    _ref = Router.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return Router.__super__.constructor.apply(this, arguments);
   }
 
   Router.prototype.add = function(route, handler) {
     var fn, h, rt, _i, _len;
-
     if (typeof route === 'object') {
       for (rt in route) {
         if (!__hasProp.call(route, rt)) continue;
@@ -4041,19 +3883,19 @@ module.exports = Router;
 
 });
 require.register("dermis/dist/Channel.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
-var Channel, Emitter, _ref,
+// Generated by CoffeeScript 1.6.1
+var Channel, Emitter,
   __hasProp = {}.hasOwnProperty,
   __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
 Emitter = require('emitter');
 
 Channel = (function(_super) {
+
   __extends(Channel, _super);
 
   function Channel() {
-    _ref = Channel.__super__.constructor.apply(this, arguments);
-    return _ref;
+    return Channel.__super__.constructor.apply(this, arguments);
   }
 
   return Channel;
@@ -4064,7 +3906,7 @@ module.exports = Channel;
 
 });
 require.register("dermis/dist/dermis.js", function(exports, require, module){
-// Generated by CoffeeScript 1.6.2
+// Generated by CoffeeScript 1.6.1
 var Channel, Router, dermis, k, rivets, rivetsConfig, v, _ref;
 
 Router = require('./Router');
@@ -4111,29 +3953,22 @@ module.exports = dermis;
 
 });
 require.alias("component-emitter/index.js", "dermis/deps/emitter/index.js");
-require.alias("component-emitter/index.js", "emitter/index.js");
 require.alias("component-indexof/index.js", "component-emitter/deps/indexof/index.js");
 
 require.alias("apily-guid/index.js", "dermis/deps/guid/index.js");
-require.alias("apily-guid/index.js", "guid/index.js");
 
-require.alias("mikeric-rivets/dist/rivets.js", "dermis/deps/rivets/dist/rivets.js");
-require.alias("mikeric-rivets/dist/rivets.js", "dermis/deps/rivets/index.js");
-require.alias("mikeric-rivets/dist/rivets.js", "rivets/index.js");
-require.alias("mikeric-rivets/dist/rivets.js", "mikeric-rivets/index.js");
+require.alias("mikeric-rivets/lib/rivets.js", "dermis/deps/rivets/lib/rivets.js");
+require.alias("mikeric-rivets/lib/rivets.js", "dermis/deps/rivets/index.js");
+require.alias("mikeric-rivets/lib/rivets.js", "mikeric-rivets/index.js");
 
 require.alias("segmentio-extend/index.js", "dermis/deps/extend/index.js");
-require.alias("segmentio-extend/index.js", "extend/index.js");
 
 require.alias("anthonyshort-event-splitter/index.js", "dermis/deps/event-splitter/index.js");
-require.alias("anthonyshort-event-splitter/index.js", "event-splitter/index.js");
 
 require.alias("visionmedia-page.js/index.js", "dermis/deps/page/index.js");
-require.alias("visionmedia-page.js/index.js", "page/index.js");
 
 require.alias("visionmedia-superagent/lib/client.js", "dermis/deps/superagent/lib/client.js");
 require.alias("visionmedia-superagent/lib/client.js", "dermis/deps/superagent/index.js");
-require.alias("visionmedia-superagent/lib/client.js", "superagent/index.js");
 require.alias("component-emitter/index.js", "visionmedia-superagent/deps/emitter/index.js");
 require.alias("component-indexof/index.js", "component-emitter/deps/indexof/index.js");
 
@@ -4143,11 +3978,9 @@ require.alias("visionmedia-superagent/lib/client.js", "visionmedia-superagent/in
 
 require.alias("aheckmann-mpath/lib/index.js", "dermis/deps/mpath/lib/index.js");
 require.alias("aheckmann-mpath/lib/index.js", "dermis/deps/mpath/index.js");
-require.alias("aheckmann-mpath/lib/index.js", "mpath/index.js");
 require.alias("aheckmann-mpath/lib/index.js", "aheckmann-mpath/index.js");
 
 require.alias("yields-prevent/index.js", "dermis/deps/prevent/index.js");
-require.alias("yields-prevent/index.js", "prevent/index.js");
 
 require.alias("dermis/dist/dermis.js", "dermis/index.js");
 
@@ -4156,5 +3989,5 @@ if (typeof exports == "object") {
 } else if (typeof define == "function" && define.amd) {
   define(function(){ return require("dermis"); });
 } else {
-  this["dermis"] = require("dermis");
+  window["dermis"] = require("dermis");
 }})();

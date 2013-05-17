@@ -250,7 +250,7 @@ class Model extends Emitter
         cb err if cb
         return
       cb err, res if cb
-      @emit "created", res
+      @emit "destroyed", res
     return @
 
   # ### fetched(fn)
