@@ -1,10 +1,10 @@
 {
   "name": "dermis",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "dependencies": {
     "component/emitter":"*",
     "apily/guid": "*",
-    "mikeric/rivets": "*",
+    "mikeric/rivets": "v0.4.9",
     "segmentio/extend": "*",
     "anthonyshort/event-splitter": "*",
     "visionmedia/page.js": "*",
