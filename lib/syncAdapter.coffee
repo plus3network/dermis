@@ -29,7 +29,7 @@ module.exports = (method, mod, opt={}, cb) ->
   opt.type ?= 'json'
 
   req = request[verb](url)
-    .type(util.result(opt.type))
+    .set('Accept', 'application/json')
 
   # add in user options to req
   if opt.headers
@@ -44,7 +44,8 @@ module.exports = (method, mod, opt={}, cb) ->
   if util.result(opt.withCredentials) is true
     req.withCredentials()
 
-  unless verb is "GET"
+  unless verb is "get"
+    req.type util.result(opt.type)
     req.send util.result(opt.attrs) or mod.toJSON()
 
   req.end cb

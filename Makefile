@@ -11,16 +11,16 @@ build: components lib
 	@cp ./dermis.js ./example
 
 test: build lib
-	@node_modules/.bin/coffee -b -o test/lib -c test/src/*.coffee
-	@rm -rf test/plztestme
-	@node_modules/.bin/coffee test/fixCoverage.coffee
-	@rm -rf test/deps-cov
-	-@jscoverage test/plztestme test/deps-cov
-	-@pkill -9 -f test/server.coffee
-	@node_modules/.bin/coffee test/server.coffee &
-	@node_modules/.bin/mocha-phantomjs --reporter dot ./test/runner.html -s localToRemoteUrlAccessEnabled=true -s webSecurityEnabled=false
-	-@node_modules/.bin/mocha-phantomjs --reporter json-cov ./test/runner.html -s localToRemoteUrlAccessEnabled=true -s webSecurityEnabled=false | json2htmlcov > test/coverage.html
-	-@pkill -9 -f test/server.coffee
+	node_modules/.bin/coffee -b -o test/lib -c test/src/*.coffee
+	rm -rf test/plztestme
+	node_modules/.bin/coffee test/fixCoverage.coffee
+	rm -rf test/deps-cov
+	-jscoverage test/plztestme test/deps-cov
+	-pkill -9 -f test/server.coffee
+	node_modules/.bin/coffee test/server.coffee &
+	node_modules/.bin/mocha-phantomjs --reporter dot ./test/runner.html -s localToRemoteUrlAccessEnabled=true -s webSecurityEnabled=false
+	-node_modules/.bin/mocha-phantomjs --reporter json-cov ./test/runner.html -s localToRemoteUrlAccessEnabled=true -s webSecurityEnabled=false | json2htmlcov > test/coverage.html
+	-pkill -9 -f test/server.coffee
 
 components: component.json
 	@node_modules/.bin/component install --dev
